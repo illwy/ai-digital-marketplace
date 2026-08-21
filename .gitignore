@@ -1,0 +1,38 @@
+# Agent / IDE skill caches
+.agents/
+.claude/
+.grok/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Logs
+logs/
+*.log
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Java / Maven
+target/
+*.class
+.mvn/wrapper/maven-wrapper.jar
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Test / coverage
+coverage/
+*.lcov

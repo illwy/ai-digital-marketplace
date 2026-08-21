@@ -1,0 +1,9 @@
+package com.aidigital.marketplace.catalog.infrastructure.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.aidigital.marketplace.catalog.infrastructure.entity.ProductEntity;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+@Mapper
+public interface ProductMapper extends BaseMapper<ProductEntity> {}

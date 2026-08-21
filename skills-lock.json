@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "skills": {
+    "alipay-payment-integration": {
+      "source": "alipay/ai",
+      "sourceType": "github",
+      "skillPath": "skills/alipay-payment-integration/SKILL.md",
+      "computedHash": "972d3b9f921bfb2e3de07c77343bdb1b738605e9a707910fb7d97ba3deae9fdf"
+    },
+    "api-and-interface-design": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/api-and-interface-design/SKILL.md",
+      "computedHash": "26f5a9e7abfd332d7a2e5887cf19bddd3393f47514c379b36bf227c1f15cdec4"
+    },
+    "code-review-and-quality": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/code-review-and-quality/SKILL.md",
+      "computedHash": "6231479cc74c7ed70a5618b81b3f94034d9806c0319a1a23d15f9b94a368c581"
+    },
+    "codebase-design": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/codebase-design/SKILL.md",
+      "computedHash": "caea3cb8a8281ff829fd1a2b985044e77601b62f301adf43f689ccfc74c15f6f"
+    },
+    "docker-patterns": {
+      "source": "affaan-m/ecc",
+      "sourceType": "github",
+      "skillPath": "skills/docker-patterns/SKILL.md",
+      "computedHash": "af6deba271429bcb5198a7e56a4f71f948509e06037e6a3210d0ad5f516eeb29"
+    },
+    "documentation-and-adrs": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/documentation-and-adrs/SKILL.md",
+      "computedHash": "7464fd2950b99fb00bbf65cab27653e0a049eef00c98927713ffdfe232a9daa9"
+    },
+    "domain-modeling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/domain-modeling/SKILL.md",
+      "computedHash": "336547f3ff285e822fc70b69b170dc58bceef9c8ed5fad18de0046287d6be837"
+    },
+    "mysql": {
+      "source": "planetscale/database-skills",
+      "sourceType": "github",
+      "skillPath": "skills/mysql/SKILL.md",
+      "computedHash": "a74d7d018c4a9cfe4fd6e37f8758ef03272cde3f3dc2444c4f299636f4b3d275"
+    },
+    "nginx-configuration": {
+      "source": "aj-geddes/useful-ai-prompts",
+      "sourceType": "github",
+      "skillPath": "skills/nginx-configuration/SKILL.md",
+      "computedHash": "9931a0039c76d7642a4822552c39901f5f0330055260fe4032daaadef2b9924e"
+    },
+    "owasp-security": {
+      "source": "agamm/claude-code-owasp",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/owasp-security/SKILL.md",
+      "computedHash": "ef7052e4845942cdd299d4b9b3a9f3f5ba4653988e25dd40fdad33e54fee7249"
+    },
+    "redis-connections": {
+      "source": "redis/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/redis-connections/SKILL.md",
+      "computedHash": "650825cfc353cff566cf04523e79932a43a9ef4774e795473ee224377602e495"
+    },
+    "redis-core": {
+      "source": "redis/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/redis-core/SKILL.md",
+      "computedHash": "cb71ae830f0e6431fc4696c2a0578d40840b2f3de84daa40cbe6275f16591ee0"
+    },
+    "security-and-hardening": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/security-and-hardening/SKILL.md",
+      "computedHash": "47d027526d7e0be784a19a034f18cba328009b3c8fe483f16e4b12530cf82183"
+    },
+    "spring-boot-cache": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-cache/SKILL.md",
+      "computedHash": "fedd5e520f8768b8679e8d155588b2fe2453732e588b4f0759d9e18c56c72842"
+    },
+    "spring-boot-crud-patterns": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-crud-patterns/SKILL.md",
+      "computedHash": "121abfe5b499eaaf39b6340a5f9364652f1ada91b518edbe349011ace3dce916"
+    },
+    "spring-boot-rest-api-standards": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-rest-api-standards/SKILL.md",
+      "computedHash": "081a4ddbc15c61f8597b85be1c5e59bdfba9862cef37cb786da8c4e92067b9e3"
+    },
+    "spring-boot-security-jwt": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-security-jwt/SKILL.md",
+      "computedHash": "f04cfa9e9e9cc68eefbfc7eb9e7a8d4f7e23f1a5545894f94aa88ce2dc2fe065"
+    },
+    "spring-boot-test-patterns": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-java/skills/spring-boot-test-patterns/SKILL.md",
+      "computedHash": "64bad0e697b4390e9835637d16b0d4e81600d8f186c2ceb7c95cef86c23d9b22"
+    },
+    "vue-best-practices": {
+      "source": "vuejs-ai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/vue-best-practices/SKILL.md",
+      "computedHash": "21132f6c11c765bd11d0d6ad081122dd858630073e2123b651e58f17b399b131"
+    },
+    "vue-pinia-best-practices": {
+      "source": "vuejs-ai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/vue-pinia-best-practices/SKILL.md",
+      "computedHash": "ab191c9cc34d755e5e2133bbedc56bd5f9ba0841e242a7b54c818780a5c78a9c"
+    },
+    "vue-router-best-practices": {
+      "source": "vuejs-ai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/vue-router-best-practices/SKILL.md",
+      "computedHash": "5a8f2f8021fe27cef48d8cf053b4cdb9375c0dc5d5e066330888229d0370f55c"
+    },
+    "vue-testing-best-practices": {
+      "source": "vuejs-ai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/vue-testing-best-practices/SKILL.md",
+      "computedHash": "743e11d7e5eaea83aead5853200df531328036f0cb7009d70f525626292f12d2"
+    },
+    "wechatpay-payment-integration": {
+      "source": "wechatpay-apiv3/wechatpay-skills",
+      "sourceType": "github",
+      "skillPath": "wechatpay-payment-integration/SKILL.md",
+      "computedHash": "2ac88a9c9eeb1fb35b671b98e703fa199cec4367699805beea01fe9ee9f0983f"
+    }
+  }
+}

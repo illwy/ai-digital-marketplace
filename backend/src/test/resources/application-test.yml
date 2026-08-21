@@ -1,0 +1,13 @@
+spring:
+  task:
+    scheduling:
+      enabled: false
+
+app:
+  jwt:
+    secret: test-jwt-secret-key-32-chars-minimum
+  admin:
+    username: admin
+    password: test-admin-password
+  demo-seed:
+    enabled: false

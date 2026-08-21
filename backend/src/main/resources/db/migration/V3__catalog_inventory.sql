@@ -1,0 +1,38 @@
+CREATE TABLE `category` (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(64) NOT NULL,
+    sort_order INT NOT NULL DEFAULT 0,
+    status VARCHAR(16) NOT NULL,
+    created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `product` (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    category_id BIGINT UNSIGNED NOT NULL,
+    name VARCHAR(128) NOT NULL,
+    description TEXT NULL,
+    cover_url VARCHAR(512) NULL,
+    price_fen INT NOT NULL,
+    delivery_type VARCHAR(16) NOT NULL,
+    status VARCHAR(16) NOT NULL,
+    created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    KEY idx_product_category (category_id),
+    KEY idx_product_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `virtual_inventory` (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT UNSIGNED NOT NULL,
+    content TEXT NOT NULL,
+    status VARCHAR(16) NOT NULL,
+    order_id BIGINT UNSIGNED NULL,
+    locked_at DATETIME(3) NULL,
+    sold_at DATETIME(3) NULL,
+    remark VARCHAR(255) NULL,
+    created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    KEY idx_inventory_product_status (product_id, status, id),
+    KEY idx_inventory_order (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
