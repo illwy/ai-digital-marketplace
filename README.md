@@ -72,4 +72,13 @@ mvn test
 - MySQL：localhost:3307 / marketplace
 - Redis：localhost:6379
 
-管理员账号来自 `.env` 的 `ADMIN_USERNAME` / `ADMIN_PASSWORD`。若数据库里已有旧管理员，种子不会改其密码，需要清 volume 或手工改密。启动后会种子一条演示商品「演示激活码」。
+管理员账号来自 `.env` 的 `ADMIN_USERNAME` / `ADMIN_PASSWORD`。若数据库里已有旧管理员，种子不会改其密码，需要清 volume 或手工改密：
+
+```bash
+docker compose --env-file .env -f docker/docker-compose.yml down -v
+docker compose --env-file .env -f docker/docker-compose.yml up --build
+```
+
+启动后会种子一条演示商品「演示激活码」。支付第一版只用钱包和沙箱，不接入支付宝/微信商户。
+
+CI：GitHub Actions 在 push / PR 时跑后端 `mvn test` 和前端 `npm run build`。
