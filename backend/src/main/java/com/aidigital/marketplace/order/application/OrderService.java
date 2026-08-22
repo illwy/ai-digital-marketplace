@@ -178,12 +178,14 @@ public class OrderService {
 
     private ListResponse<OrderView> list(
             Long userId, String payStatus, String deliveryStatus, String orderNo, int page, int pageSize) {
+        // 条件参数必须先归一化：MyBatis Plus 的条件布尔值不短路取值表达式
+        String normalizedOrderNo = orderNo == null ? "" : orderNo.trim();
         Page<OrderEntity> mp = PageQuery.of(page, pageSize);
         LambdaQueryWrapper<OrderEntity> query = new LambdaQueryWrapper<OrderEntity>()
                 .eq(userId != null, OrderEntity::getUserId, userId)
                 .eq(payStatus != null && !payStatus.isBlank(), OrderEntity::getPayStatus, payStatus)
                 .eq(deliveryStatus != null && !deliveryStatus.isBlank(), OrderEntity::getDeliveryStatus, deliveryStatus)
-                .eq(orderNo != null && !orderNo.isBlank(), OrderEntity::getOrderNo, orderNo.trim())
+                .eq(!normalizedOrderNo.isEmpty(), OrderEntity::getOrderNo, normalizedOrderNo)
                 .orderByDesc(OrderEntity::getId);
         Page<OrderEntity> result = orderMapper.selectPage(mp, query);
         List<OrderView> items = result.getRecords().stream()
