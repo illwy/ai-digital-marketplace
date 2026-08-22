@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { motion } from 'motion-v'
 import AnnouncementList from '../../components/shop/AnnouncementList.vue'
 import ProductList from '../../components/shop/ProductList.vue'
 import { fetchAnnouncements, fetchCategories, fetchProducts } from '../../api/shop'
@@ -65,17 +66,75 @@ onMounted(async () => {
   <section class="home">
     <div class="hero">
       <div class="hero-copy-block">
-        <h1 class="hero-title">柜台上的一张票，<br />付款后立刻到你手里。</h1>
-        <p class="hero-copy">账号、卡密、额度都是虚拟库存。一单一件，确认付款后当场出卡，可复制，可再查。</p>
+        <motion.p
+          class="hero-kicker"
+          :initial="{ opacity: 0, y: 16 }"
+          :animate="{ opacity: 1, y: 0 }"
+          :transition="{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }"
+        >
+          AI 数字商品 · 自动发卡
+        </motion.p>
+        <motion.h1
+          class="hero-title"
+          :initial="{ opacity: 0, y: 24 }"
+          :animate="{ opacity: 1, y: 0 }"
+          :transition="{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }"
+        >
+          柜台上的<span class="grad-text">一张票</span>，<br />付款后立刻到你手里。
+        </motion.h1>
+        <motion.p
+          class="hero-copy"
+          :initial="{ opacity: 0, y: 20 }"
+          :animate="{ opacity: 1, y: 0 }"
+          :transition="{ duration: 0.55, delay: 0.18, ease: [0.22, 1, 0.36, 1] }"
+        >
+          账号、卡密、额度都是虚拟库存。一单一件，确认付款后当场出卡，可复制，可再查。
+        </motion.p>
+        <motion.div
+          class="hero-actions"
+          :initial="{ opacity: 0, y: 20 }"
+          :animate="{ opacity: 1, y: 0 }"
+          :transition="{ duration: 0.55, delay: 0.26, ease: [0.22, 1, 0.36, 1] }"
+        >
+          <a class="hero-cta" href="#shelf">开始选卡</a>
+          <RouterLink class="hero-cta hero-cta--ghost" to="/register">注册购买</RouterLink>
+        </motion.div>
       </div>
-      <ol class="hero-steps">
-        <li><span>选卡</span>看库存和类型</li>
-        <li><span>下单</span>锁住这一张</li>
-        <li><span>出密</span>复制并自己保存</li>
-      </ol>
+
+      <!-- 悬浮全息凭证 -->
+      <motion.div
+        class="hero-card-stage"
+        :initial="{ opacity: 0, y: 32, rotate: 4 }"
+        :animate="{ opacity: 1, y: 0, rotate: 0 }"
+        :transition="{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }"
+      >
+        <div class="hero-holo-card">
+          <div class="hero-holo-shine"></div>
+          <header>
+            <span class="hero-holo-chip"></span>
+            <span class="hero-holo-label">DELIVERED</span>
+          </header>
+          <p class="hero-holo-name">ChatGPT Plus 月卡</p>
+          <p class="hero-holo-secret">gpt-plus-demo-••••</p>
+          <footer>
+            <span>订单已交付</span>
+            <span class="hero-holo-ok">✓ 可复制</span>
+          </footer>
+        </div>
+      </motion.div>
     </div>
+
+    <ol class="hero-steps">
+      <li v-for="(step, index) in ['选卡', '下单', '出密']" :key="step" class="hero-step">
+        <span class="hero-step-num font-display">{{ String(index + 1).padStart(2, '0') }}</span>
+        <strong>{{ step }}</strong>
+        <small>{{ ['看库存和类型', '锁住这一张', '复制并自己保存'][index] }}</small>
+      </li>
+    </ol>
+
     <AnnouncementList :items="announcements" />
-    <div class="home-toolbar" role="radiogroup" aria-label="卡种">
+
+    <div id="shelf" class="home-toolbar" role="radiogroup" aria-label="卡种">
       <button
         type="button"
         class="chip"
@@ -120,109 +179,266 @@ onMounted(async () => {
 <style scoped>
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(220px, 0.7fr);
-  gap: 32px 48px;
-  align-items: end;
-  margin-bottom: 36px;
-  padding: 12px 0 8px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 40px 56px;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 28px 0 8px;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--violet-soft);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+}
+
+.hero-kicker::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--violet);
+  box-shadow: var(--glow-violet);
 }
 
 .hero-title {
-  margin: 0 0 16px;
-  font-family: "Noto Serif SC", serif;
-  font-size: clamp(32px, 5vw, 52px);
-  font-weight: 700;
-  line-height: 1.18;
+  margin: 0 0 18px;
+  font-size: clamp(30px, 4.6vw, 50px);
+  font-weight: 800;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
   text-wrap: balance;
-  letter-spacing: -0.02em;
 }
 
 .hero-copy {
-  max-width: 36rem;
-  margin: 0;
-  color: var(--mute);
-  line-height: 1.75;
+  max-width: 34rem;
+  margin: 0 0 26px;
+  color: var(--ink-soft);
+  line-height: 1.8;
   font-size: 15px;
 }
 
-.hero-steps {
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: var(--grad-primary);
+  background-size: 180% 180%;
+  animation: grad-shift 6s ease infinite;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: var(--glow-violet);
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 44px rgba(139, 92, 246, 0.55);
+}
+
+.hero-cta--ghost {
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  box-shadow: none;
+  color: var(--ink-soft);
+  animation: none;
+}
+
+.hero-cta--ghost:hover {
+  border-color: rgba(34, 211, 238, 0.55);
+  color: var(--cyan-soft);
+  box-shadow: none;
+}
+
+/* ---------- 悬浮全息凭证 ---------- */
+.hero-card-stage {
+  perspective: 900px;
+}
+
+.hero-holo-card {
   position: relative;
-  margin: 0;
-  padding: 18px 22px 18px 28px;
-  list-style: none;
-  background: var(--ticket);
-  color: var(--ticket-ink);
+  overflow: hidden;
+  padding: 26px 26px 22px;
+  border-radius: 22px;
+  background:
+    linear-gradient(160deg, rgba(139, 92, 246, 0.22), rgba(34, 211, 238, 0.12) 60%, rgba(244, 114, 182, 0.14)),
+    var(--bg-raised);
+  border: 1px solid rgba(148, 163, 216, 0.25);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  animation: float-soft 7s ease-in-out infinite;
+  transform: rotate(-3deg);
 }
 
-.hero-steps::before,
-.hero-steps::after {
-  content: "";
+.hero-holo-shine {
   position: absolute;
-  left: -9px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--paper);
+  top: -30%;
+  bottom: -30%;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+  animation: shimmer-sweep 3.6s var(--ease-move) infinite;
+  pointer-events: none;
 }
 
-.hero-steps::before {
-  top: 18%;
+.hero-holo-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
 }
 
-.hero-steps::after {
-  bottom: 18%;
+.hero-holo-chip {
+  width: 38px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--grad-primary);
+  opacity: 0.9;
 }
 
-.hero-steps li {
-  display: grid;
-  grid-template-columns: 3.5em 1fr;
-  gap: 10px;
-  padding: 10px 0;
-  color: var(--ticket-mute);
-  font-size: 14px;
+.hero-holo-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--green);
 }
 
-.hero-steps li + li {
-  border-top: 1.5px dashed #cbb8a6;
-}
-
-.hero-steps span {
-  color: #9a3b16;
-  font-family: "Noto Serif SC", serif;
+.hero-holo-name {
+  margin: 0 0 10px;
+  font-size: 17px;
   font-weight: 700;
+  color: var(--ink);
 }
 
+.hero-holo-secret {
+  margin: 0 0 24px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(5, 6, 13, 0.6);
+  border: 1px dashed var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--cyan-soft);
+}
+
+.hero-holo-card footer {
+  display: flex;
+  justify-content: space-between;
+  color: var(--mute);
+  font-size: 13px;
+}
+
+.hero-holo-ok {
+  color: var(--green);
+  font-weight: 600;
+}
+
+/* ---------- 三步流程（真实顺序，编号承载信息） ---------- */
+.hero-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 0 0 34px;
+  padding: 0;
+  list-style: none;
+}
+
+.hero-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 14px;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  transition: transform 0.25s var(--ease-out), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-step:hover {
+  transform: translateY(-3px);
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: var(--glow-violet);
+}
+
+.hero-step-num {
+  grid-row: span 2;
+  font-size: 22px;
+  font-weight: 800;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-step strong {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.hero-step small {
+  color: var(--mute);
+  font-size: 12.5px;
+}
+
+/* ---------- 分类筛选 ---------- */
 .home-toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 8px 0 22px;
+  margin: 0 0 24px;
+  scroll-margin-top: 90px;
 }
 
 .chip {
-  padding: 6px 12px;
+  padding: 7px 16px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: transparent;
+  background: var(--surface);
   color: var(--mute);
   font: inherit;
   font-size: 13px;
   cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+}
+
+.chip:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
 }
 
 .chip.is-on {
-  border-color: var(--copper);
-  background: color-mix(in srgb, var(--copper) 16%, transparent);
-  color: var(--copper-deep);
+  border-color: transparent;
+  background: var(--grad-primary);
+  color: #fff;
+  box-shadow: var(--glow-violet);
 }
 
 .chip:focus-visible {
-  outline: 2px solid var(--copper);
+  outline: 2px solid var(--violet);
   outline-offset: 2px;
 }
 
 .home-error {
-  color: #e48a78;
+  color: var(--red);
 }
 
 .home-pagination {
@@ -234,7 +450,16 @@ onMounted(async () => {
 @media (max-width: 800px) {
   .hero {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 28px;
+    padding-top: 8px;
+  }
+
+  .hero-card-stage {
+    max-width: 360px;
+  }
+
+  .hero-steps {
+    grid-template-columns: 1fr;
   }
 }
 </style>

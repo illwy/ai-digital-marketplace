@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { motion } from 'motion-v'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fetchAdminAfterSales, handleAfterSale } from '../../api/admin'
 import { readApiError } from '../../api/http'
-import { ticketStatusLabel, ticketStatusTagType } from '../../utils/labels'
+import FoilBadge from '../../components/shop/FoilBadge.vue'
+import { ticketStatusLabel } from '../../utils/labels'
 import { formatDateTime } from '../../utils/time'
 import type { AfterSaleView } from '../../types/api'
 
@@ -90,23 +92,35 @@ onMounted(load)
 </script>
 
 <template>
-  <el-card>
-    <div class="page-header">
-      <h2 class="page-title">售后</h2>
+  <motion.div
+    class="page"
+    :initial="{ opacity: 0, y: 24 }"
+    :animate="{ opacity: 1, y: 0 }"
+    :transition="{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }"
+  >
+    <header class="page-head">
+      <div>
+        <h2 class="page-title">售后</h2>
+        <p class="page-desc">买家售后工单，标记处理中与关闭时需填写说明。</p>
+      </div>
+    </header>
+
+    <div class="filter-bar glass-panel">
+      <el-form inline class="page-filters" @submit.prevent="search">
+        <el-form-item label="状态">
+          <el-select v-model="status" clearable placeholder="全部" style="width: 170px">
+            <el-option label="待处理+处理中" value="OPEN_ACTIVE" />
+            <el-option label="待处理" value="OPEN" />
+            <el-option label="处理中" value="PROCESSING" />
+            <el-option label="已关闭" value="CLOSED" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="search">查询</el-button>
+        </el-form-item>
+      </el-form>
     </div>
-    <el-form inline class="page-filters" @submit.prevent="search">
-      <el-form-item label="状态">
-        <el-select v-model="status" clearable placeholder="全部" style="width: 170px">
-          <el-option label="待处理+处理中" value="OPEN_ACTIVE" />
-          <el-option label="待处理" value="OPEN" />
-          <el-option label="处理中" value="PROCESSING" />
-          <el-option label="已关闭" value="CLOSED" />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="search">查询</el-button>
-      </el-form-item>
-    </el-form>
+
     <el-alert
       v-if="errorMessage"
       :title="errorMessage"
@@ -115,74 +129,113 @@ onMounted(load)
       :closable="false"
       class="page-alert"
     />
-    <el-table v-loading="loading" :data="items">
-      <el-table-column prop="id" label="单号" width="80" />
-      <el-table-column label="商品" min-width="140">
-        <template #default="{ row }">{{ row.productName || '-' }}</template>
-      </el-table-column>
-      <el-table-column label="订单" min-width="180">
-        <template #default="{ row }">
-          <RouterLink :to="{ path: '/admin/orders', query: { orderNo: row.orderNo } }">
-            {{ row.orderNo || `#${row.orderId}` }}
-          </RouterLink>
+
+    <div class="table-card glass-panel">
+      <el-table v-loading="loading" :data="items">
+        <el-table-column label="单号" width="80">
+          <template #default="{ row }">
+            <span class="font-mono">{{ row.id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="商品" min-width="140">
+          <template #default="{ row }">{{ row.productName || '-' }}</template>
+        </el-table-column>
+        <el-table-column label="订单" min-width="180">
+          <template #default="{ row }">
+            <RouterLink class="font-mono" :to="{ path: '/admin/orders', query: { orderNo: row.orderNo } }">
+              {{ row.orderNo || `#${row.orderId}` }}
+            </RouterLink>
+          </template>
+        </el-table-column>
+        <el-table-column label="用户" width="80">
+          <template #default="{ row }">
+            <span class="font-mono">{{ row.userId }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="reason" label="原因" min-width="180" />
+        <el-table-column label="状态" width="110">
+          <template #default="{ row }">
+            <FoilBadge
+              :label="ticketStatusLabel(row.status)"
+              :tone="
+                row.status === 'OPEN' ? 'warn' : row.status === 'PROCESSING' ? 'violet' : 'ok'
+              "
+            />
+          </template>
+        </el-table-column>
+        <el-table-column prop="adminReply" label="回复" min-width="160" />
+        <el-table-column label="创建时间" min-width="160">
+          <template #default="{ row }">
+            <span class="font-mono">{{ formatDateTime(row.createdAt) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="180" fixed="right">
+          <template #default="{ row }">
+            <el-button v-if="row.status === 'OPEN'" text type="primary" @click="markProcessing(row)">处理中</el-button>
+            <el-button v-if="row.status !== 'CLOSED'" text type="danger" @click="closeTicket(row)">关闭</el-button>
+          </template>
+        </el-table-column>
+        <template #empty>
+          <el-empty description="暂无售后单" />
         </template>
-      </el-table-column>
-      <el-table-column prop="userId" label="用户" width="80" />
-      <el-table-column prop="reason" label="原因" min-width="180" />
-      <el-table-column label="状态" width="110">
-        <template #default="{ row }">
-          <el-tag :type="ticketStatusTagType(row.status)" size="small">
-            {{ ticketStatusLabel(row.status) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="adminReply" label="回复" min-width="160" />
-      <el-table-column label="创建时间" min-width="160">
-        <template #default="{ row }">{{ formatDateTime(row.createdAt) }}</template>
-      </el-table-column>
-      <el-table-column label="操作" width="180" fixed="right">
-        <template #default="{ row }">
-          <el-button v-if="row.status === 'OPEN'" text type="primary" @click="markProcessing(row)">处理中</el-button>
-          <el-button v-if="row.status !== 'CLOSED'" text type="danger" @click="closeTicket(row)">关闭</el-button>
-        </template>
-      </el-table-column>
-      <template #empty>
-        <el-empty description="暂无售后单" />
-      </template>
-    </el-table>
-    <div v-if="total > 0" class="page-pagination">
-      <el-pagination
-        :current-page="page"
-        :page-size="20"
-        :total="total"
-        layout="total, prev, pager, next"
-        @current-change="onPageChange"
-      />
+      </el-table>
+      <div v-if="total > 0" class="page-pagination">
+        <el-pagination
+          :current-page="page"
+          :page-size="20"
+          :total="total"
+          layout="total, prev, pager, next"
+          @current-change="onPageChange"
+        />
+      </div>
     </div>
-  </el-card>
+  </motion.div>
 </template>
 
 <style scoped>
-.page-header {
-  margin-bottom: 12px;
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .page-title {
   margin: 0;
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.02em;
 }
 
-.page-filters {
-  margin-bottom: 4px;
+.page-desc {
+  margin: 4px 0 0;
+  color: var(--mute);
+  font-size: 13.5px;
+}
+
+.filter-bar {
+  padding: 6px 16px 0;
+}
+
+.filter-bar :deep(.el-form-item) {
+  margin-bottom: 6px;
 }
 
 .page-alert {
-  margin-bottom: 12px;
+  border-radius: 12px;
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-card :deep(.el-table::before) {
+  display: none;
 }
 
 .page-pagination {
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
+  padding-bottom: 16px;
 }
 </style>
