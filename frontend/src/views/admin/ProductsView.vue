@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { motion } from 'motion-v'
 import { ElMessage } from 'element-plus'
 import { fetchAdminCategories, fetchAdminProducts, saveProduct } from '../../api/admin'
 import { readApiError } from '../../api/http'
+import FoilBadge from '../../components/shop/FoilBadge.vue'
 import { deliveryTypeLabel, productStatusLabel } from '../../utils/labels'
 import { formatFen } from '../../utils/money'
 import type { CategoryView, ProductView } from '../../types/api'
@@ -135,28 +137,40 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-card>
-    <div class="page-header">
-      <h2 class="page-title">商品</h2>
+  <motion.div
+    class="page"
+    :initial="{ opacity: 0, y: 24 }"
+    :animate="{ opacity: 1, y: 0 }"
+    :transition="{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }"
+  >
+    <header class="page-head">
+      <div>
+        <h2 class="page-title">商品</h2>
+        <p class="page-desc">维护在售商品的价格、交付方式与上下架状态。</p>
+      </div>
       <el-button type="primary" @click="openCreate">新建商品</el-button>
+    </header>
+
+    <div class="filter-bar glass-panel">
+      <el-form inline class="page-filters" @submit.prevent="search">
+        <el-form-item label="分类">
+          <el-select v-model="categoryId" clearable placeholder="全部" style="width: 180px">
+            <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="status" clearable placeholder="全部" style="width: 140px">
+            <el-option label="草稿" value="DRAFT" />
+            <el-option label="在售" value="ON_SALE" />
+            <el-option label="下架" value="OFF_SALE" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="search">查询</el-button>
+        </el-form-item>
+      </el-form>
     </div>
-    <el-form inline class="page-filters" @submit.prevent="search">
-      <el-form-item label="分类">
-        <el-select v-model="categoryId" clearable placeholder="全部" style="width: 180px">
-          <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select v-model="status" clearable placeholder="全部" style="width: 140px">
-          <el-option label="草稿" value="DRAFT" />
-          <el-option label="在售" value="ON_SALE" />
-          <el-option label="下架" value="OFF_SALE" />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="search">查询</el-button>
-      </el-form-item>
-    </el-form>
+
     <el-alert
       v-if="errorMessage"
       :title="errorMessage"
@@ -165,46 +179,60 @@ onMounted(async () => {
       :closable="false"
       class="page-alert"
     />
-    <el-table v-loading="loading" :data="products">
-      <el-table-column label="封面" width="80">
-        <template #default="{ row }">
-          <el-image v-if="row.coverUrl" :src="row.coverUrl" fit="cover" class="cover-thumb" />
-          <span v-else>-</span>
+
+    <div class="table-card glass-panel">
+      <el-table v-loading="loading" :data="products">
+        <el-table-column label="封面" width="80">
+          <template #default="{ row }">
+            <el-image v-if="row.coverUrl" :src="row.coverUrl" fit="cover" class="cover-thumb" />
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="名称" min-width="140" />
+        <el-table-column label="分类" min-width="100">
+          <template #default="{ row }">{{ categoryName(row.categoryId) }}</template>
+        </el-table-column>
+        <el-table-column label="价格" width="110">
+          <template #default="{ row }">
+            <span class="font-mono price-text">{{ formatFen(row.priceFen) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="发卡类型" width="110">
+          <template #default="{ row }">{{ deliveryTypeLabel(row.deliveryType) }}</template>
+        </el-table-column>
+        <el-table-column label="状态" width="100">
+          <template #default="{ row }">
+            <FoilBadge
+              :label="productStatusLabel(row.status)"
+              :tone="row.status === 'ON_SALE' ? 'cyan' : row.status === 'DRAFT' ? 'mute' : 'warn'"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="可售" width="80">
+          <template #default="{ row }">
+            <span class="font-mono">{{ row.availableCount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="100" fixed="right">
+          <template #default="{ row }">
+            <el-button text type="primary" @click="openEdit(row)">编辑</el-button>
+          </template>
+        </el-table-column>
+        <template #empty>
+          <el-empty description="暂无商品" />
         </template>
-      </el-table-column>
-      <el-table-column prop="name" label="名称" min-width="140" />
-      <el-table-column label="分类" min-width="100">
-        <template #default="{ row }">{{ categoryName(row.categoryId) }}</template>
-      </el-table-column>
-      <el-table-column label="价格" width="110">
-        <template #default="{ row }">{{ formatFen(row.priceFen) }}</template>
-      </el-table-column>
-      <el-table-column label="发卡类型" width="110">
-        <template #default="{ row }">{{ deliveryTypeLabel(row.deliveryType) }}</template>
-      </el-table-column>
-      <el-table-column label="状态" width="100">
-        <template #default="{ row }">{{ productStatusLabel(row.status) }}</template>
-      </el-table-column>
-      <el-table-column prop="availableCount" label="可售" width="80" />
-      <el-table-column label="操作" width="100" fixed="right">
-        <template #default="{ row }">
-          <el-button text type="primary" @click="openEdit(row)">编辑</el-button>
-        </template>
-      </el-table-column>
-      <template #empty>
-        <el-empty description="暂无商品" />
-      </template>
-    </el-table>
-    <div v-if="total > 0" class="page-pagination">
-      <el-pagination
-        :current-page="page"
-        :page-size="20"
-        :total="total"
-        layout="total, prev, pager, next"
-        @current-change="onPageChange"
-      />
+      </el-table>
+      <div v-if="total > 0" class="page-pagination">
+        <el-pagination
+          :current-page="page"
+          :page-size="20"
+          :total="total"
+          layout="total, prev, pager, next"
+          @current-change="onPageChange"
+        />
+      </div>
     </div>
-  </el-card>
+  </motion.div>
 
   <el-dialog v-model="dialogVisible" :title="form.id ? '编辑商品' : '新建商品'" width="560px" destroy-on-close>
     <el-form label-width="90px">
@@ -222,7 +250,7 @@ onMounted(async () => {
       <el-form-item label="价格(分)">
         <div class="price-row">
           <el-input-number v-model="form.priceFen" :min="0" :step="100" />
-          <span class="price-preview">{{ formatFen(form.priceFen) }}</span>
+          <span class="price-preview font-mono">{{ formatFen(form.priceFen) }}</span>
         </div>
       </el-form-item>
       <el-form-item label="交付">
@@ -252,36 +280,68 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.page-header {
+.page {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 16px;
 }
 
 .page-title {
   margin: 0;
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.02em;
 }
 
-.page-filters {
-  margin-bottom: 4px;
+.page-desc {
+  margin: 4px 0 0;
+  color: var(--mute);
+  font-size: 13.5px;
+}
+
+.filter-bar {
+  padding: 6px 16px 0;
+}
+
+.filter-bar :deep(.el-form-item) {
+  margin-bottom: 6px;
 }
 
 .page-alert {
-  margin-bottom: 12px;
+  border-radius: 12px;
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-card :deep(.el-table::before) {
+  display: none;
 }
 
 .page-pagination {
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
+  padding-bottom: 16px;
 }
 
 .cover-thumb {
   width: 48px;
   height: 48px;
-  border-radius: 4px;
+  border-radius: 8px;
+}
+
+.price-text {
+  color: var(--cyan-soft);
+  font-weight: 600;
 }
 
 .price-row {
@@ -291,7 +351,7 @@ onMounted(async () => {
 }
 
 .price-preview {
-  color: #f56c6c;
+  color: var(--amber);
   font-weight: 600;
 }
 </style>

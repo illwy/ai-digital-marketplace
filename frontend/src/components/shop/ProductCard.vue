@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue'
 import type { ProductView } from '../../types/api'
 import { deliveryTypeLabel } from '../../utils/labels'
 import { formatFen } from '../../utils/money'
-import FoilBadge from './FoilBadge.vue'
 
 const props = defineProps<{
   product: ProductView
@@ -11,8 +10,36 @@ const props = defineProps<{
 
 const coverFailed = ref(false)
 const soldOut = computed(() => props.product.availableCount < 1)
-const stockText = computed(() => (soldOut.value ? '售罄' : `库存 ${props.product.availableCount}`))
-const ctaText = computed(() => (soldOut.value ? '售罄' : '立即购买'))
+const stockText = computed(() => (soldOut.value ? '已售罄' : `现货 ${props.product.availableCount} 件`))
+const lowStock = computed(() => !soldOut.value && props.product.availableCount <= 3)
+
+// 指针跟随的 3D 倾斜 + 光斑
+const tiltStyle = ref<Record<string, string>>({})
+const glareStyle = ref<Record<string, string>>({})
+let frame = 0
+
+function onPointerMove(event: PointerEvent): void {
+  const card = event.currentTarget as HTMLElement
+  const rect = card.getBoundingClientRect()
+  const px = (event.clientX - rect.left) / rect.width
+  const py = (event.clientY - rect.top) / rect.height
+  cancelAnimationFrame(frame)
+  frame = requestAnimationFrame(() => {
+    tiltStyle.value = {
+      transform: `perspective(900px) rotateX(${(0.5 - py) * 7}deg) rotateY(${(px - 0.5) * 9}deg) translateY(-4px)`,
+    }
+    glareStyle.value = {
+      opacity: '1',
+      background: `radial-gradient(circle at ${px * 100}% ${py * 100}%, rgba(255,255,255,0.16), transparent 55%)`,
+    }
+  })
+}
+
+function onPointerLeave(): void {
+  cancelAnimationFrame(frame)
+  tiltStyle.value = { transform: '' }
+  glareStyle.value = { opacity: '0' }
+}
 
 watch(
   () => props.product.coverUrl,
@@ -24,30 +51,40 @@ watch(
 
 <template>
   <RouterLink class="product-link" :to="`/products/${product.id}`">
-    <span class="ticket-dash" aria-hidden="true" />
-    <article class="ticket" :class="{ 'is-sold-out': soldOut }">
-      <div class="ticket-cover">
+    <article
+      class="holo-card"
+      :class="{ 'is-sold-out': soldOut }"
+      :style="tiltStyle"
+      @pointermove="onPointerMove"
+      @pointerleave="onPointerLeave"
+    >
+      <span class="holo-glare" :style="glareStyle" aria-hidden="true"></span>
+      <span class="holo-edge" aria-hidden="true"></span>
+
+      <div class="holo-cover">
         <img
           v-if="product.coverUrl && !coverFailed"
-          class="ticket-cover-img"
+          class="holo-cover-img"
           :src="product.coverUrl"
           alt=""
           @error="coverFailed = true"
         />
-        <div v-else class="ticket-cover-fallback" />
-        <FoilBadge class="ticket-type" :label="deliveryTypeLabel(product.deliveryType)" />
+        <div v-else class="holo-cover-fallback">
+          <span class="font-display">AI</span>
+        </div>
+        <span v-if="soldOut" class="holo-soldout font-display">SOLD OUT</span>
+        <span class="holo-type">{{ deliveryTypeLabel(product.deliveryType) }}</span>
       </div>
-      <div class="ticket-perf" aria-hidden="true">
-        <span class="ticket-notch ticket-notch-left" />
-        <span class="ticket-notch ticket-notch-right" />
-      </div>
-      <div class="ticket-body">
-        <h3 class="ticket-name">{{ product.name }}</h3>
-        <p class="ticket-stock">{{ stockText }}</p>
-      </div>
-      <div class="ticket-actions">
-        <p class="ticket-price">{{ formatFen(product.priceFen) }}</p>
-        <span class="ticket-cta">{{ ctaText }}</span>
+
+      <div class="holo-body">
+        <h3 class="holo-name">{{ product.name }}</h3>
+        <p class="holo-stock" :class="{ 'is-low': lowStock }">
+          <span class="holo-stock-dot"></span>{{ stockText }}
+        </p>
+        <div class="holo-actions">
+          <p class="holo-price font-mono">{{ formatFen(product.priceFen) }}</p>
+          <span class="holo-cta">{{ soldOut ? '到货提醒' : '立即购买' }} →</span>
+        </div>
       </div>
     </article>
   </RouterLink>
@@ -55,152 +92,220 @@ watch(
 
 <style scoped>
 .product-link {
-  position: relative;
   display: block;
   height: 100%;
   color: inherit;
   text-decoration: none;
+  border-radius: 20px;
 }
 
 .product-link:focus-visible {
-  outline: 2px solid var(--copper);
+  outline: 2px solid var(--violet);
   outline-offset: 4px;
 }
 
-.ticket-dash {
-  position: absolute;
-  inset: 0;
-  border: 1.5px dashed var(--copper);
-  pointer-events: none;
-}
-
-.ticket {
+.holo-card {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--ticket);
-  color: var(--ticket-ink);
-  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.product-link:hover .ticket,
-.product-link:focus-visible .ticket {
-  transform: translate(-6px, -6px);
-}
-
-.ticket.is-sold-out {
-  filter: grayscale(0.55);
-  opacity: 0.78;
-}
-
-.ticket-cover {
-  position: relative;
-  height: 148px;
   overflow: hidden;
-  background: #2a211c;
+  border-radius: 20px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  transform-style: preserve-3d;
+  transition: transform 0.35s var(--ease-out), border-color 0.3s ease, box-shadow 0.35s ease;
+  will-change: transform;
 }
 
-.ticket-cover-img,
-.ticket-cover-fallback {
+@media (hover: hover) and (pointer: fine) {
+  .product-link:hover .holo-card,
+  .product-link:focus-visible .holo-card {
+    border-color: rgba(139, 92, 246, 0.55);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), var(--glow-violet);
+  }
+}
+
+/* 指针光斑 */
+.holo-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 流动渐变描边 */
+.holo-edge {
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(130deg, rgba(139, 92, 246, 0.7), transparent 30%, transparent 65%, rgba(34, 211, 238, 0.6));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.product-link:hover .holo-edge {
+  opacity: 1;
+  animation: grad-shift 4s ease infinite;
+  background-size: 220% 220%;
+}
+
+.holo-card.is-sold-out {
+  filter: grayscale(0.8);
+  opacity: 0.72;
+}
+
+/* ---------- 封面 ---------- */
+.holo-cover {
+  position: relative;
+  height: 168px;
+  overflow: hidden;
+  background: #0b0e1a;
+}
+
+.holo-cover-img,
+.holo-cover-fallback {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s var(--ease-out);
 }
 
-.ticket-cover-fallback {
-  background: linear-gradient(145deg, #3a2a22, #c45c28);
+.product-link:hover .holo-cover-img {
+  transform: scale(1.06);
 }
 
-.ticket-type {
+.holo-cover-fallback {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.45), transparent 60%),
+    radial-gradient(circle at 75% 80%, rgba(34, 211, 238, 0.35), transparent 55%),
+    var(--bg-raised);
+}
+
+.holo-cover-fallback span {
+  font-size: 44px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.holo-soldout {
   position: absolute;
-  left: 10px;
-  bottom: 10px;
-  color: #f3c9a0;
-  background: rgba(17, 12, 9, 0.78);
-  border-color: color-mix(in srgb, var(--copper) 70%, #f3c9a0);
+  inset: auto 14px 14px auto;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(5, 6, 13, 0.85);
+  border: 1px solid var(--line-strong);
+  color: var(--mute);
+  font-size: 11px;
+  letter-spacing: 0.16em;
 }
 
-.ticket-perf {
-  position: relative;
-  height: 18px;
-  background: var(--ticket);
-}
-
-.ticket-perf::after {
-  content: "";
+.holo-type {
   position: absolute;
-  left: 18px;
-  right: 18px;
-  top: 50%;
-  border-top: 1.5px dashed #cbb8a6;
-}
-
-.ticket-notch {
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--paper);
-  transform: translateY(-50%);
-  box-shadow: 0 0 0 2px var(--paper);
-}
-
-.ticket-notch-left {
-  left: -8px;
-}
-
-.ticket-notch-right {
-  right: -8px;
-}
-
-.ticket-body {
-  flex: 1;
-  padding: 4px 14px 10px;
-}
-
-.ticket-name {
-  margin: 0 0 8px;
-  font-family: "Noto Serif SC", serif;
-  font-size: 17px;
-  line-height: 1.35;
-  text-wrap: pretty;
-}
-
-.ticket-stock {
-  margin: 0;
-  color: var(--ticket-mute);
+  left: 12px;
+  bottom: 12px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: rgba(5, 6, 13, 0.78);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  backdrop-filter: blur(8px);
+  color: var(--violet-soft);
   font-size: 12px;
 }
 
-.ticket-actions {
+/* ---------- 内容 ---------- */
+.holo-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px 18px;
+}
+
+.holo-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.holo-stock {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: var(--mute);
+  font-size: 12.5px;
+}
+
+.holo-stock-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.7);
+}
+
+.holo-stock.is-low {
+  color: var(--amber);
+}
+
+.holo-stock.is-low .holo-stock-dot {
+  background: var(--amber);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+}
+
+.holo-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 10px 14px 14px;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
 }
 
-.ticket-price {
+.holo-price {
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: #9a3b16;
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--cyan-soft);
 }
 
-.ticket-cta {
-  padding: 5px 10px;
-  background: var(--copper);
-  color: #1a120c;
-  font-size: 12px;
-  font-weight: 700;
+.holo-cta {
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: var(--grad-primary);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: box-shadow 0.25s var(--ease-out), transform 0.25s var(--ease-out);
 }
 
-.ticket.is-sold-out .ticket-cta {
-  background: #c4b6a8;
+.product-link:hover .holo-cta {
+  box-shadow: var(--glow-violet);
+  transform: translateX(2px);
+}
+
+.holo-card.is-sold-out .holo-cta {
+  background: var(--surface-strong);
+  color: var(--mute);
 }
 </style>

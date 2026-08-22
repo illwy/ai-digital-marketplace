@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { motion } from 'motion-v'
 import FoilBadge from '../../components/shop/FoilBadge.vue'
 import { fetchOrders } from '../../api/shop'
 import { readApiError } from '../../api/http'
@@ -59,8 +60,12 @@ onMounted(load)
 </script>
 
 <template>
-  <section>
-    <h2 class="page-title">我的订单</h2>
+  <motion.div
+    :initial="{ opacity: 0, y: 20 }"
+    :animate="{ opacity: 1, y: 0 }"
+    :transition="{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }"
+  >
+    <h2 class="page-title font-display">我的<span class="grad-text">订单</span></h2>
     <p v-if="errorMessage" class="page-error">{{ errorMessage }}</p>
     <el-skeleton v-else-if="loading" :rows="6" animated />
     <el-empty v-else-if="!orders.length" description="还没有订单">
@@ -69,15 +74,12 @@ onMounted(load)
       </RouterLink>
     </el-empty>
     <div v-else class="order-list">
-      <RouterLink v-for="row in orders" :key="row.id" class="order-ticket" :to="`/orders/${row.id}`">
-        <span class="order-dash" aria-hidden="true" />
-        <article class="order-sheet">
-          <span class="order-notch order-notch-left" aria-hidden="true" />
-          <span class="order-notch order-notch-right" aria-hidden="true" />
-          <p class="order-no">{{ row.orderNo }}</p>
+      <RouterLink v-for="row in orders" :key="row.id" class="order-row" :to="`/orders/${row.id}`">
+        <article class="order-card">
+          <p class="order-no font-mono">{{ row.orderNo }}</p>
           <div class="order-main">
             <h3 class="order-name">{{ row.productName }}</h3>
-            <p class="order-price">{{ formatFen(row.amountFen) }}</p>
+            <p class="order-price font-mono">{{ formatFen(row.amountFen) }}</p>
           </div>
           <div class="order-flags">
             <FoilBadge :label="payStatusLabel(row.payStatus)" :tone="payTone(row.payStatus)" />
@@ -86,7 +88,7 @@ onMounted(load)
               :tone="deliveryTone(row.deliveryStatus)"
             />
           </div>
-          <span class="order-cta">{{ row.deliveryStatus === 'DELIVERED' ? '查看卡密' : '详情' }}</span>
+          <span class="order-cta">{{ row.deliveryStatus === 'DELIVERED' ? '查看卡密' : '详情' }} →</span>
         </article>
       </RouterLink>
     </div>
@@ -99,17 +101,19 @@ onMounted(load)
         @current-change="onPageChange"
       />
     </div>
-  </section>
+  </motion.div>
 </template>
 
 <style scoped>
 .page-title {
   margin: 0 0 18px;
-  font-family: "Noto Serif SC", serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 .page-error {
-  color: var(--el-color-danger);
+  color: var(--red);
 }
 
 .order-list {
@@ -117,77 +121,63 @@ onMounted(load)
   gap: 14px;
 }
 
-.order-ticket {
-  position: relative;
+.order-row {
   display: block;
   color: inherit;
   text-decoration: none;
 }
 
-.order-ticket:focus-visible {
-  outline: 2px solid var(--copper);
+.order-row:focus-visible {
+  outline: 2px solid var(--violet);
   outline-offset: 4px;
+  border-radius: 18px;
 }
 
-.order-dash {
-  position: absolute;
-  inset: 0;
-  border: 1.5px dashed var(--copper);
-  pointer-events: none;
-}
-
-.order-sheet {
-  position: relative;
+.order-card {
   display: grid;
-  grid-template-columns: minmax(140px, 0.7fr) minmax(0, 1.4fr) auto auto;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 1.4fr) auto auto;
   align-items: center;
   gap: 12px 18px;
-  padding: 16px 18px;
-  background: var(--ticket);
-  color: var(--ticket-ink);
-  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 18px 20px;
+  border-radius: 18px;
+  background:
+    linear-gradient(160deg, rgba(139, 92, 246, 0.06), rgba(34, 211, 238, 0.04)),
+    var(--surface);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform 0.25s var(--ease-out), border-color 0.25s var(--ease-out),
+    box-shadow 0.25s var(--ease-out), background-color 0.25s ease;
 }
 
-.order-ticket:hover .order-sheet,
-.order-ticket:focus-visible .order-sheet {
-  transform: translate(-5px, -5px);
-}
-
-.order-notch {
-  position: absolute;
-  top: 50%;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--paper);
-  transform: translateY(-50%);
-}
-
-.order-notch-left {
-  left: -8px;
-}
-
-.order-notch-right {
-  right: -8px;
+.order-row:hover .order-card,
+.order-row:focus-visible .order-card {
+  transform: translateY(-2px);
+  border-color: rgba(139, 92, 246, 0.55);
+  box-shadow: var(--glow-violet), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background-color: var(--surface-strong);
 }
 
 .order-no {
   margin: 0;
-  color: var(--ticket-mute);
-  font-family: "JetBrains Mono", Consolas, monospace;
+  color: var(--mute);
   font-size: 12px;
+  letter-spacing: 0.03em;
 }
 
 .order-name {
   margin: 0 0 4px;
-  font-family: "Noto Serif SC", serif;
   font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .order-price {
   margin: 0;
-  color: #9a3b16;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cyan-soft);
   font-variant-numeric: tabular-nums;
 }
 
@@ -198,11 +188,13 @@ onMounted(load)
 }
 
 .order-cta {
-  padding: 5px 10px;
-  background: var(--copper);
-  color: #1a120c;
-  font-size: 12px;
-  font-weight: 700;
+  color: var(--ink-soft);
+  font-size: 13px;
+  transition: color 0.25s var(--ease-out);
+}
+
+.order-row:hover .order-cta {
+  color: var(--violet-soft);
 }
 
 .page-pagination {
@@ -212,7 +204,7 @@ onMounted(load)
 }
 
 @media (max-width: 800px) {
-  .order-sheet {
+  .order-card {
     grid-template-columns: 1fr auto;
   }
 

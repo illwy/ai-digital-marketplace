@@ -2,7 +2,9 @@
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { motion } from 'motion-v'
 import CardSecretPanel from '../../components/shop/CardSecretPanel.vue'
+import FoilBadge from '../../components/shop/FoilBadge.vue'
 import { cancelOrder, createAfterSale, fetchDeliveries, fetchOrder, payOrder, sandboxTopup } from '../../api/shop'
 import { readApiError } from '../../api/http'
 import { useWalletStore } from '../../stores/wallet'
@@ -111,14 +113,25 @@ watch(order, tick, { immediate: true })
 </script>
 
 <template>
-  <el-card v-if="order && issued" class="voucher">
-    <p class="issued-kicker">发卡凭证</p>
+  <!-- 已出卡：交付凭证 -->
+  <motion.div
+    v-if="order && issued"
+    :initial="{ opacity: 0, scale: 0.97 }"
+    :animate="{ opacity: 1, scale: 1 }"
+    :transition="{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }"
+  >
+    <el-card class="voucher">
+    <div class="voucher-head">
+      <span class="voucher-badge font-display">DELIVERED</span>
+      <FoilBadge :label="orderAftersaleLabel(order.aftersaleStatus)" :tone="order.aftersaleStatus === 'NONE' ? 'mute' : 'warn'" />
+    </div>
     <h2 class="page-title">{{ order.productName }}</h2>
-    <p class="issued-copy">订单号 {{ order.orderNo }} · {{ formatFen(order.amountFen) }}</p>
+    <p class="issued-copy font-mono">{{ order.orderNo }} · {{ formatFen(order.amountFen) }}</p>
     <p v-if="errorMessage" class="page-error">{{ errorMessage }}</p>
     <CardSecretPanel v-if="delivery?.content" :content="delivery.content" hint="请立即复制并自行保存。" />
     <p v-else class="page-error">卡密加载失败，请到「卡密」页查看。</p>
-    <RouterLink class="issued-link" to="/deliveries">我的卡密</RouterLink>
+    <RouterLink class="issued-link" to="/deliveries">查看我的卡密 →</RouterLink>
+
     <el-collapse class="aftersale-fold">
       <el-collapse-item title="卡密有问题？提交售后" name="aftersale">
         <div v-if="order.aftersaleStatus === 'NONE'" class="aftersale">
@@ -132,35 +145,67 @@ watch(order, tick, { immediate: true })
         </p>
       </el-collapse-item>
     </el-collapse>
-  </el-card>
-  <el-card v-else-if="order" class="pending-slip">
-    <h2 class="page-title">订单 {{ order.orderNo }}</h2>
-    <p>商品：{{ order.productName }}</p>
-    <p>金额：{{ formatFen(order.amountFen) }}</p>
-    <p>支付状态：{{ payStatusLabel(order.payStatus) }}</p>
-    <p>交付状态：{{ deliveryStatusLabel(order.deliveryStatus) }}</p>
-    <p>售后状态：{{ orderAftersaleLabel(order.aftersaleStatus) }}</p>
-    <p v-if="canPay && remain">剩余支付时间：{{ remain }}</p>
-    <p v-if="wallet">钱包余额：{{ formatFen(wallet.balanceFen) }}</p>
-    <p v-if="errorMessage" class="page-error">{{ errorMessage }}</p>
-    <div v-if="canPay" class="actions">
-      <el-button type="primary" size="large" :loading="paying" @click="pay('SANDBOX')">确认付款并出卡</el-button>
-      <el-button :loading="paying" @click="pay('WALLET')">钱包支付</el-button>
-      <el-button @click="topup">钱包充值 10 元</el-button>
-      <el-button @click="onCancel">取消订单</el-button>
+    </el-card>
+  </motion.div>
+
+  <!-- 待支付 -->
+  <motion.div
+    v-if="order && !issued"
+    :initial="{ opacity: 0, y: 20 }"
+    :animate="{ opacity: 1, y: 0 }"
+    :transition="{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }"
+  >
+    <el-card class="pending-slip glass-panel">
+    <div class="pending-head">
+      <h2 class="page-title">订单支付</h2>
+      <FoilBadge :label="payStatusLabel(order.payStatus)" :tone="canPay ? 'warn' : 'mute'" />
     </div>
-  </el-card>
-  <el-skeleton v-else-if="loading" :rows="6" animated />
-  <el-empty v-else :description="errorMessage || '订单不存在'" />
+
+    <div class="pending-product">
+      <p class="pending-name">{{ order.productName }}</p>
+      <p class="pending-amount font-mono">{{ formatFen(order.amountFen) }}</p>
+    </div>
+
+    <div v-if="canPay && remain" class="countdown">
+      <span class="countdown-label">剩余支付时间</span>
+      <span class="countdown-value font-mono">{{ remain }}</span>
+    </div>
+
+    <dl class="pending-meta">
+      <div><dt>订单号</dt><dd class="font-mono">{{ order.orderNo }}</dd></div>
+      <div><dt>支付状态</dt><dd>{{ payStatusLabel(order.payStatus) }}</dd></div>
+      <div><dt>交付状态</dt><dd>{{ deliveryStatusLabel(order.deliveryStatus) }}</dd></div>
+      <div><dt>售后状态</dt><dd>{{ orderAftersaleLabel(order.aftersaleStatus) }}</dd></div>
+      <div v-if="wallet"><dt>钱包余额</dt><dd class="font-mono">{{ formatFen(wallet.balanceFen) }}</dd></div>
+    </dl>
+
+    <p v-if="errorMessage" class="page-error">{{ errorMessage }}</p>
+
+    <div v-if="canPay" class="actions">
+      <el-button type="primary" size="large" class="pay-main" :loading="paying" @click="pay('SANDBOX')">
+        确认付款并出卡 ⚡
+      </el-button>
+      <el-button size="large" :loading="paying" @click="pay('WALLET')">钱包支付</el-button>
+      <el-button size="large" @click="topup">钱包充值 ¥10</el-button>
+      <el-button size="large" text @click="onCancel">取消订单</el-button>
+    </div>
+    </el-card>
+  </motion.div>
+
+  <el-skeleton v-if="loading" :rows="6" animated />
+  <el-empty v-else-if="!order" :description="errorMessage || '订单不存在'" />
 </template>
 
 <style scoped>
 .page-title {
-  margin-top: 0;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
 }
 
 .page-error {
-  color: var(--el-color-danger);
+  color: var(--red);
+  font-size: 13.5px;
 }
 
 .actions,
@@ -168,7 +213,7 @@ watch(order, tick, { immediate: true })
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .aftersale-btn {
@@ -180,72 +225,164 @@ watch(order, tick, { immediate: true })
   color: var(--mute);
 }
 
+/* ---------- 交付凭证 ---------- */
 .voucher {
   position: relative;
-  overflow: visible !important;
-  background: var(--ticket) !important;
-  color: var(--ticket-ink);
-  border: 0 !important;
-}
-
-.voucher::before,
-.voucher::after {
-  content: "";
-  position: absolute;
-  left: -9px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--paper);
+  overflow: hidden;
+  border-radius: 22px !important;
+  background:
+    linear-gradient(160deg, rgba(34, 211, 238, 0.09), rgba(139, 92, 246, 0.12) 55%, rgba(244, 114, 182, 0.07)),
+    var(--bg-raised) !important;
+  border: 1px solid rgba(34, 211, 238, 0.3) !important;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 6px;
 }
 
 .voucher::before {
-  top: 28px;
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -20%;
+  width: 60%;
+  height: 200%;
+  pointer-events: none;
+  background: radial-gradient(ellipse, rgba(139, 92, 246, 0.14), transparent 65%);
 }
 
-.voucher::after {
-  bottom: 28px;
+.voucher-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
-.voucher .page-title {
-  font-family: "Noto Serif SC", serif;
-}
-
-.voucher .issued-copy,
-.voucher .issued-link,
-.voucher .aftersale-hint {
-  color: var(--ticket-mute);
-}
-
-.issued-kicker {
-  margin: 0 0 4px;
-  color: #9a3b16;
-  font-size: 13px;
-  letter-spacing: 0.12em;
+.voucher-badge {
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(52, 211, 153, 0.55);
+  color: var(--green);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  animation: pulse-glow 2.6s ease infinite;
 }
 
 .issued-copy {
-  margin: 0;
+  margin: 6px 0 0;
   color: var(--mute);
+  font-size: 13px;
 }
 
 .issued-link {
   display: inline-block;
-  margin-top: 12px;
+  margin-top: 14px;
+  color: var(--cyan-soft);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.issued-link:hover {
+  text-decoration: underline;
 }
 
 .aftersale-fold {
-  margin-top: 20px;
+  margin-top: 22px;
   border: none;
 }
 
+/* ---------- 待支付 ---------- */
 .pending-slip {
-  background: var(--ticket) !important;
-  color: var(--ticket-ink);
-  border: 0 !important;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 8px;
 }
 
-.pending-slip .page-title {
-  font-family: "Noto Serif SC", serif;
+.pending-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.pending-product {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.pending-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pending-amount {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--cyan-soft);
+}
+
+.countdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.countdown-label {
+  color: var(--amber);
+  font-size: 13.5px;
+}
+
+.countdown-value {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.pending-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px 18px;
+  margin: 18px 0 0;
+}
+
+.pending-meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--line);
+  font-size: 13.5px;
+}
+
+.pending-meta dt {
+  color: var(--mute);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pending-meta dd {
+  margin: 0;
+  color: var(--ink-soft);
+  text-align: right;
+  min-width: 0;
+  word-break: break-all;
+}
+
+.pay-main {
+  min-width: 220px;
 }
 </style>

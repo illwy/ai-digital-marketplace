@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { motion } from 'motion-v'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { deleteCategory, fetchAdminCategories, saveCategory } from '../../api/admin'
 import { readApiError } from '../../api/http'
+import FoilBadge from '../../components/shop/FoilBadge.vue'
 import { enablementLabel } from '../../utils/labels'
 import type { CategoryView } from '../../types/api'
 
@@ -94,11 +96,20 @@ onMounted(load)
 </script>
 
 <template>
-  <el-card>
-    <div class="page-header">
-      <h2 class="page-title">分类</h2>
+  <motion.div
+    class="page"
+    :initial="{ opacity: 0, y: 24 }"
+    :animate="{ opacity: 1, y: 0 }"
+    :transition="{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }"
+  >
+    <header class="page-head">
+      <div>
+        <h2 class="page-title">分类</h2>
+        <p class="page-desc">商品分类与排序，前台货架按此分组展示。</p>
+      </div>
       <el-button type="primary" @click="openCreate">新建分类</el-button>
-    </div>
+    </header>
+
     <el-alert
       v-if="errorMessage"
       :title="errorMessage"
@@ -107,23 +118,32 @@ onMounted(load)
       :closable="false"
       class="page-alert"
     />
-    <el-table v-loading="loading" :data="items">
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="sortOrder" label="排序" width="100" />
-      <el-table-column label="状态" width="100">
-        <template #default="{ row }">{{ enablementLabel(row.status) }}</template>
-      </el-table-column>
-      <el-table-column label="操作" width="160">
-        <template #default="{ row }">
-          <el-button text type="primary" @click="openEdit(row)">编辑</el-button>
-          <el-button text type="danger" @click="remove(row)">删除</el-button>
+
+    <div class="table-card glass-panel">
+      <el-table v-loading="loading" :data="items">
+        <el-table-column prop="name" label="名称" />
+        <el-table-column label="排序" width="100">
+          <template #default="{ row }">
+            <span class="font-mono">{{ row.sortOrder }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="100">
+          <template #default="{ row }">
+            <FoilBadge :label="enablementLabel(row.status)" :tone="row.status === 'ENABLED' ? 'ok' : 'mute'" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="160">
+          <template #default="{ row }">
+            <el-button text type="primary" @click="openEdit(row)">编辑</el-button>
+            <el-button text type="danger" @click="remove(row)">删除</el-button>
+          </template>
+        </el-table-column>
+        <template #empty>
+          <el-empty description="暂无分类" />
         </template>
-      </el-table-column>
-      <template #empty>
-        <el-empty description="暂无分类" />
-      </template>
-    </el-table>
-  </el-card>
+      </el-table>
+    </div>
+  </motion.div>
 
   <el-dialog v-model="dialogVisible" :title="form.id ? '编辑分类' : '新建分类'" width="480px" destroy-on-close>
     <el-form label-width="80px">
@@ -148,19 +168,41 @@ onMounted(load)
 </template>
 
 <style scoped>
-.page-header {
+.page {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 16px;
 }
 
 .page-title {
   margin: 0;
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.02em;
+}
+
+.page-desc {
+  margin: 4px 0 0;
+  color: var(--mute);
+  font-size: 13.5px;
 }
 
 .page-alert {
-  margin-bottom: 12px;
+  border-radius: 12px;
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-card :deep(.el-table::before) {
+  display: none;
 }
 </style>

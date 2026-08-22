@@ -2,9 +2,9 @@
 withDefaults(
   defineProps<{
     label: string
-    tone?: 'copper' | 'mute' | 'warn' | 'ok' | 'danger'
+    tone?: 'violet' | 'mute' | 'warn' | 'ok' | 'danger' | 'cyan'
   }>(),
-  { tone: 'copper' },
+  { tone: 'violet' },
 )
 </script>
 
@@ -16,37 +16,38 @@ withDefaults(
 .foil-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 9px;
-  border: 1px solid currentColor;
+  padding: 2px 10px;
   border-radius: 999px;
-  font-size: 11px;
+  border: 1px solid currentColor;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  font-size: 11.5px;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.6;
   white-space: nowrap;
 }
 
-.is-copper {
-  color: var(--copper);
-  background: color-mix(in srgb, var(--copper) 12%, transparent);
+.is-violet {
+  color: var(--violet-soft);
+}
+
+.is-copper,
+.is-cyan {
+  color: var(--cyan-soft);
 }
 
 .is-mute {
-  color: var(--ticket-mute, var(--mute));
-  background: transparent;
+  color: var(--mute);
 }
 
 .is-warn {
-  color: #c47a2a;
-  background: color-mix(in srgb, #c47a2a 12%, transparent);
+  color: var(--amber);
 }
 
 .is-ok {
-  color: #3f7a4a;
-  background: color-mix(in srgb, #3f7a4a 12%, transparent);
+  color: var(--green);
 }
 
 .is-danger {
-  color: #b54a3a;
-  background: color-mix(in srgb, #b54a3a 12%, transparent);
+  color: var(--red);
 }
 </style>

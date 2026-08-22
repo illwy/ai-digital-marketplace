@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { motion } from 'motion-v'
 import { ElMessage } from 'element-plus'
 import { fetchAdminAnnouncements, saveAnnouncement } from '../../api/admin'
 import { readApiError } from '../../api/http'
+import FoilBadge from '../../components/shop/FoilBadge.vue'
 import { enablementLabel } from '../../utils/labels'
 import { formatDateTime } from '../../utils/time'
 import type { AnnouncementView } from '../../types/api'
@@ -73,11 +75,20 @@ onMounted(load)
 </script>
 
 <template>
-  <el-card>
-    <div class="page-header">
-      <h2 class="page-title">公告</h2>
+  <motion.div
+    class="page"
+    :initial="{ opacity: 0, y: 24 }"
+    :animate="{ opacity: 1, y: 0 }"
+    :transition="{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }"
+  >
+    <header class="page-head">
+      <div>
+        <h2 class="page-title">公告</h2>
+        <p class="page-desc">前台公告栏内容，启用后立即展示给买家。</p>
+      </div>
       <el-button type="primary" @click="openCreate">新建公告</el-button>
-    </div>
+    </header>
+
     <el-alert
       v-if="errorMessage"
       :title="errorMessage"
@@ -86,27 +97,36 @@ onMounted(load)
       :closable="false"
       class="page-alert"
     />
-    <el-table v-loading="loading" :data="items">
-      <el-table-column prop="title" label="标题" min-width="160" />
-      <el-table-column label="状态" width="100">
-        <template #default="{ row }">{{ enablementLabel(row.status) }}</template>
-      </el-table-column>
-      <el-table-column label="发布时间" min-width="160">
-        <template #default="{ row }">{{ formatDateTime(row.publishedAt) }}</template>
-      </el-table-column>
-      <el-table-column label="创建时间" min-width="160">
-        <template #default="{ row }">{{ formatDateTime(row.createdAt) }}</template>
-      </el-table-column>
-      <el-table-column label="操作" width="100">
-        <template #default="{ row }">
-          <el-button text type="primary" @click="openEdit(row)">编辑</el-button>
+
+    <div class="table-card glass-panel">
+      <el-table v-loading="loading" :data="items">
+        <el-table-column prop="title" label="标题" min-width="160" />
+        <el-table-column label="状态" width="100">
+          <template #default="{ row }">
+            <FoilBadge :label="enablementLabel(row.status)" :tone="row.status === 'ENABLED' ? 'ok' : 'mute'" />
+          </template>
+        </el-table-column>
+        <el-table-column label="发布时间" min-width="160">
+          <template #default="{ row }">
+            <span class="font-mono">{{ formatDateTime(row.publishedAt) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" min-width="160">
+          <template #default="{ row }">
+            <span class="font-mono">{{ formatDateTime(row.createdAt) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="100">
+          <template #default="{ row }">
+            <el-button text type="primary" @click="openEdit(row)">编辑</el-button>
+          </template>
+        </el-table-column>
+        <template #empty>
+          <el-empty description="暂无公告" />
         </template>
-      </el-table-column>
-      <template #empty>
-        <el-empty description="暂无公告" />
-      </template>
-    </el-table>
-  </el-card>
+      </el-table>
+    </div>
+  </motion.div>
 
   <el-dialog v-model="dialogVisible" :title="form.id ? '编辑公告' : '新建公告'" width="640px" destroy-on-close>
     <el-form label-width="80px">
@@ -131,19 +151,41 @@ onMounted(load)
 </template>
 
 <style scoped>
-.page-header {
+.page {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 16px;
 }
 
 .page-title {
   margin: 0;
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.02em;
+}
+
+.page-desc {
+  margin: 4px 0 0;
+  color: var(--mute);
+  font-size: 13.5px;
 }
 
 .page-alert {
-  margin-bottom: 12px;
+  border-radius: 12px;
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-card :deep(.el-table::before) {
+  display: none;
 }
 </style>

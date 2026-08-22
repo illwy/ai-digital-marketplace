@@ -32,6 +32,14 @@ watch(
 
 <template>
   <div class="shop-shell">
+    <!-- 极光氛围层 -->
+    <div class="aurora" aria-hidden="true">
+      <div class="aurora-orb aurora-orb--violet"></div>
+      <div class="aurora-orb aurora-orb--cyan"></div>
+      <div class="aurora-orb aurora-orb--pink"></div>
+      <div class="aurora-grid"></div>
+    </div>
+
     <header class="shop-header">
       <RouterLink class="shop-brand" to="/">
         <span class="shop-brand-mark">钥</span>
@@ -47,7 +55,10 @@ watch(
           <RouterLink class="shop-nav-link" to="/deliveries">卡密</RouterLink>
           <RouterLink class="shop-nav-link" to="/after-sales">售后</RouterLink>
           <RouterLink v-if="auth.isAdmin" class="shop-nav-link" to="/admin">后台</RouterLink>
-          <span v-if="wallet" class="shop-wallet">{{ formatFen(wallet.balanceFen) }}</span>
+          <span v-if="wallet" class="shop-wallet">
+            <span class="shop-wallet-dot"></span>
+            {{ formatFen(wallet.balanceFen) }}
+          </span>
           <span class="shop-user">{{ auth.displayName }}</span>
           <button class="shop-text-btn" type="button" @click="onLogout">退出</button>
         </template>
@@ -58,9 +69,17 @@ watch(
       </nav>
     </header>
     <main class="shop-main">
-      <RouterView />
+      <RouterView v-slot="{ Component }">
+        <Transition name="page" mode="out-in">
+          <component :is="Component" />
+        </Transition>
+      </RouterView>
     </main>
-    <footer class="shop-footer">钥市 · 虚拟库存 · 一单一件 · 出卡即复制</footer>
+    <footer class="shop-footer">
+      <span class="shop-footer-line"></span>
+      钥市 · 虚拟库存 · 一单一件 · 出卡即复制
+      <span class="shop-footer-line"></span>
+    </footer>
   </div>
 </template>
 
@@ -69,39 +88,88 @@ watch(
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(900px 420px at 80% -10%, rgba(224, 122, 58, 0.18), transparent 55%),
-    radial-gradient(700px 380px at 0% 100%, rgba(90, 42, 22, 0.45), transparent 50%),
-    var(--paper);
+  background: var(--bg);
+  position: relative;
 }
 
-.shop-shell::before {
-  content: "";
+/* ---------- 极光氛围 ---------- */
+.aurora {
   position: fixed;
   inset: 0;
+  overflow: hidden;
   pointer-events: none;
-  opacity: 0.045;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='80' height='80' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-  z-index: 1;
+  z-index: 0;
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
+  animation: aurora-drift 22s var(--ease-move) infinite;
+}
+
+.aurora-orb--violet {
+  width: 620px;
+  height: 620px;
+  top: -220px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.55), transparent 65%);
+}
+
+.aurora-orb--cyan {
+  width: 520px;
+  height: 520px;
+  top: 8%;
+  right: -180px;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.4), transparent 65%);
+  animation-delay: -7s;
+  animation-duration: 28s;
+}
+
+.aurora-orb--pink {
+  width: 420px;
+  height: 420px;
+  bottom: -160px;
+  left: 32%;
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.28), transparent 65%);
+  animation-delay: -14s;
+  animation-duration: 34s;
+}
+
+.aurora-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 163, 216, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 216, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 30%, transparent 75%);
 }
 
 .shop-header,
 .shop-main,
 .shop-footer {
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
+/* ---------- 玻璃导航 ---------- */
 .shop-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px 28px;
-  padding: 20px 32px;
+  padding: 14px 32px;
   border-bottom: 1px solid var(--line);
-  background: rgba(17, 14, 12, 0.86);
-  backdrop-filter: blur(10px);
+  background: rgba(5, 6, 13, 0.72);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
 
 .shop-brand {
@@ -113,27 +181,30 @@ watch(
 }
 
 .shop-brand-mark {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
-  background: var(--copper);
-  color: #1a120c;
-  font-family: "Noto Serif SC", serif;
-  font-size: 20px;
+  background: var(--grad-primary);
+  background-size: 200% 200%;
+  animation: grad-shift 6s ease infinite;
+  color: #fff;
+  font-size: 21px;
   font-weight: 700;
+  border-radius: 12px;
+  box-shadow: var(--glow-violet);
 }
 
 .shop-brand-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 .shop-brand-text strong {
-  font-family: "Noto Serif SC", serif;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 .shop-brand-text small {
@@ -145,58 +216,154 @@ watch(
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px 18px;
+  gap: 4px 6px;
 }
 
 .shop-nav-link {
-  color: var(--mute);
+  position: relative;
+  padding: 7px 13px;
+  border-radius: 999px;
+  color: var(--ink-soft);
   text-decoration: none;
   font-size: 14px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.shop-nav-link:hover {
+  color: var(--ink);
+  background: var(--surface-strong);
 }
 
 .shop-nav-link.router-link-active,
 .shop-nav-link.is-active {
-  color: var(--ink);
-}
-
-.shop-nav-cta {
-  padding: 8px 14px;
-  background: var(--copper);
-  color: #1a120c;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.shop-wallet,
-.shop-user {
-  font-size: 13px;
+  color: #fff;
+  background: rgba(139, 92, 246, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.4);
 }
 
 .shop-wallet {
-  color: var(--copper-deep);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 10px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--cyan-soft);
+  font-family: var(--font-mono);
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
 
+.shop-wallet-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: var(--glow-cyan);
+  animation: pulse-glow 2.4s ease infinite;
+}
+
+.shop-user {
+  padding: 0 6px;
+  color: var(--mute);
+  font-size: 13px;
+}
+
 .shop-text-btn {
-  border: 0;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--mute);
   cursor: pointer;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  transition: all 0.2s ease;
 }
 
+.shop-text-btn:hover {
+  color: var(--red);
+  background: rgba(251, 113, 133, 0.08);
+}
+
+.shop-nav-cta {
+  padding: 8px 18px;
+  margin-left: 6px;
+  background: var(--grad-primary);
+  background-size: 180% 180%;
+  animation: grad-shift 6s ease infinite;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 999px;
+  box-shadow: var(--glow-violet);
+  transition: transform 0.2s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+
+.shop-nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 36px rgba(139, 92, 246, 0.55);
+}
+
+/* ---------- 主区 ---------- */
 .shop-main {
   flex: 1;
   width: 100%;
-  max-width: 1120px;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: 28px 20px 64px;
+  padding: 32px 20px 80px;
 }
 
+/* 路由过渡 */
+.page-enter-active {
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.page-leave-active {
+  transition: opacity 0.18s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.page-leave-to {
+  opacity: 0;
+}
+
+/* ---------- 页脚 ---------- */
 .shop-footer {
-  padding: 20px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 26px;
   color: var(--mute);
   font-size: 12px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
+}
+
+.shop-footer-line {
+  width: 56px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-strong));
+}
+
+.shop-footer-line:last-child {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 720px) {
+  .shop-header {
+    padding: 12px 16px;
+  }
+
+  .shop-brand-text small {
+    display: none;
+  }
+
+  .shop-user {
+    display: none;
+  }
 }
 </style>
