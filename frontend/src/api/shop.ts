@@ -1,4 +1,4 @@
-import { http } from './http'
+import { http, newIdempotencyKey } from './http'
 import type {
   AfterSaleView,
   AnnouncementView,
@@ -29,7 +29,11 @@ export function fetchAnnouncements() {
 }
 
 export function createOrder(productId: number) {
-  return http.post<DataResponse<OrderView>>('/orders', { productId })
+  return http.post<DataResponse<OrderView>>(
+    '/orders',
+    { productId },
+    { headers: { 'Idempotency-Key': newIdempotencyKey() } },
+  )
 }
 
 export function fetchOrders(page = 1) {
@@ -45,11 +49,15 @@ export function cancelOrder(id: number) {
 }
 
 export function payOrder(id: number, channel: 'WALLET' | 'SANDBOX') {
-  return http.post<DataResponse<PaymentView>>(`/orders/${id}/payments`, { channel })
+  return http.post<DataResponse<PaymentView>>(
+    `/orders/${id}/payments`,
+    { channel },
+    { headers: { 'Idempotency-Key': newIdempotencyKey() } },
+  )
 }
 
-export function fetchDeliveries(page = 1) {
-  return http.get<ListResponse<DeliveryView>>('/deliveries', { params: { page, pageSize: 20 } })
+export function fetchDeliveries(params: { orderId?: number; page?: number } = {}) {
+  return http.get<ListResponse<DeliveryView>>('/deliveries', { params: { pageSize: 20, page: 1, ...params } })
 }
 
 export function fetchDelivery(id: number) {

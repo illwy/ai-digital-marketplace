@@ -1,96 +1,166 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { deleteCategory, fetchAdminCategories, saveCategory } from '../../api/admin'
 import { readApiError } from '../../api/http'
+import { enablementLabel } from '../../utils/labels'
 import type { CategoryView } from '../../types/api'
 
 const items = ref<CategoryView[]>([])
+const loading = ref(false)
+const saving = ref(false)
+const dialogVisible = ref(false)
 const errorMessage = ref('')
 const form = reactive({ id: 0, name: '', sortOrder: 0, status: 'ENABLED' })
 
 async function load(): Promise<void> {
-  const { data } = await fetchAdminCategories()
-  items.value = data.data
-}
-
-async function submit(): Promise<void> {
+  loading.value = true
+  errorMessage.value = ''
   try {
-    await saveCategory(
-      { name: form.name, sortOrder: form.sortOrder, status: form.status },
-      form.id || undefined,
-    )
-    form.id = 0
-    form.name = ''
-    await load()
+    const { data } = await fetchAdminCategories()
+    items.value = data.data
   } catch (error) {
     errorMessage.value = readApiError(error).message
+  } finally {
+    loading.value = false
   }
 }
 
-function edit(item: CategoryView): void {
+function resetForm(): void {
+  form.id = 0
+  form.name = ''
+  form.sortOrder = 0
+  form.status = 'ENABLED'
+}
+
+function openCreate(): void {
+  resetForm()
+  dialogVisible.value = true
+}
+
+function openEdit(item: CategoryView): void {
   form.id = item.id
   form.name = item.name
   form.sortOrder = item.sortOrder
   form.status = item.status
+  dialogVisible.value = true
 }
 
-async function remove(id: number): Promise<void> {
+async function submit(): Promise<void> {
+  if (!form.name.trim()) {
+    ElMessage.warning('请填写分类名称')
+    return
+  }
+  saving.value = true
   try {
-    await deleteCategory(id)
+    await saveCategory(
+      { name: form.name.trim(), sortOrder: form.sortOrder, status: form.status },
+      form.id || undefined,
+    )
+    ElMessage.success(form.id ? '已更新分类' : '已创建分类')
+    dialogVisible.value = false
+    resetForm()
     await load()
   } catch (error) {
+    ElMessage.error(readApiError(error).message)
+  } finally {
+    saving.value = false
+  }
+}
+
+function isDismissed(error: unknown): boolean {
+  return error === 'cancel' || error === 'close'
+}
+
+async function remove(item: CategoryView): Promise<void> {
+  try {
+    await ElMessageBox.confirm(`确认删除分类 ${item.name}？`, '确认', {
+      type: 'warning',
+      confirmButtonText: '删除',
+      cancelButtonText: '取消',
+    })
+    await deleteCategory(item.id)
+    ElMessage.success('已删除')
+    await load()
+  } catch (error) {
+    if (isDismissed(error)) {
+      return
+    }
     errorMessage.value = readApiError(error).message
   }
 }
 
-onMounted(async () => {
-  try {
-    await load()
-  } catch (error) {
-    errorMessage.value = readApiError(error).message
-  }
-})
+onMounted(load)
 </script>
 
 <template>
   <el-card>
-    <h2 class="page-title">分类</h2>
-    <el-form inline>
+    <div class="page-header">
+      <h2 class="page-title">分类</h2>
+      <el-button type="primary" @click="openCreate">新建分类</el-button>
+    </div>
+    <el-alert
+      v-if="errorMessage"
+      :title="errorMessage"
+      type="error"
+      show-icon
+      :closable="false"
+      class="page-alert"
+    />
+    <el-table v-loading="loading" :data="items">
+      <el-table-column prop="name" label="名称" />
+      <el-table-column prop="sortOrder" label="排序" width="100" />
+      <el-table-column label="状态" width="100">
+        <template #default="{ row }">{{ enablementLabel(row.status) }}</template>
+      </el-table-column>
+      <el-table-column label="操作" width="160">
+        <template #default="{ row }">
+          <el-button text type="primary" @click="openEdit(row)">编辑</el-button>
+          <el-button text type="danger" @click="remove(row)">删除</el-button>
+        </template>
+      </el-table-column>
+      <template #empty>
+        <el-empty description="暂无分类" />
+      </template>
+    </el-table>
+  </el-card>
+
+  <el-dialog v-model="dialogVisible" :title="form.id ? '编辑分类' : '新建分类'" width="480px" destroy-on-close>
+    <el-form label-width="80px">
       <el-form-item label="名称">
-        <el-input v-model="form.name" />
+        <el-input v-model="form.name" maxlength="64" />
       </el-form-item>
       <el-form-item label="排序">
         <el-input-number v-model="form.sortOrder" />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="form.status">
+        <el-select v-model="form.status" style="width: 160px">
           <el-option label="启用" value="ENABLED" />
           <el-option label="停用" value="DISABLED" />
         </el-select>
       </el-form-item>
-      <el-button type="primary" @click="submit">保存</el-button>
     </el-form>
-    <p v-if="errorMessage" class="page-error">{{ errorMessage }}</p>
-    <el-table :data="items">
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="sortOrder" label="排序" />
-      <el-table-column prop="status" label="状态" />
-      <el-table-column label="操作">
-        <template #default="{ row }">
-          <el-button text @click="edit(row)">编辑</el-button>
-          <el-button text @click="remove(row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-  </el-card>
+    <template #footer>
+      <el-button @click="dialogVisible = false">取消</el-button>
+      <el-button type="primary" :loading="saving" @click="submit">保存</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
-.page-title {
-  margin-top: 0;
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
-.page-error {
-  color: var(--el-color-danger);
+.page-title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.page-alert {
+  margin-bottom: 12px;
 }
 </style>

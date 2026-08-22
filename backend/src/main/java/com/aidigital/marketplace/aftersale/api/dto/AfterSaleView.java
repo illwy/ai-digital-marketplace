@@ -8,16 +8,20 @@ public record AfterSaleView(
         Long id,
         Long orderId,
         Long userId,
+        String orderNo,
+        String productName,
         String reason,
         String status,
         String adminReply,
         LocalDateTime createdAt) {
 
-    public static AfterSaleView from(AfterSaleEntity entity) {
+    public static AfterSaleView from(AfterSaleEntity entity, String orderNo, String productName) {
         return new AfterSaleView(
                 entity.getId(),
                 entity.getOrderId(),
                 entity.getUserId(),
+                orderNo,
+                productName,
                 entity.getReason(),
                 entity.getStatus(),
                 entity.getAdminReply(),

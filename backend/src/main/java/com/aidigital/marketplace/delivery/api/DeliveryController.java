@@ -26,9 +26,10 @@ public class DeliveryController {
     @GetMapping
     public ListResponse<DeliveryView> list(
             @AuthenticationPrincipal AuthUser user,
+            @RequestParam(required = false) Long orderId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize) {
-        return deliveryService.listMine(user.getId(), page, pageSize);
+        return deliveryService.listMine(user.getId(), orderId, page, pageSize);
     }
 
     @GetMapping("/{id}")

@@ -1,3 +1,13 @@
+:root {
+  --ink: #16130f;
+  --paper: #f3eee4;
+  --panel: #fffaf3;
+  --line: #ddd4c4;
+  --copper: #b4532a;
+  --copper-deep: #8c3c1c;
+  --mute: #6f675c;
+}
+
 html,
 body,
 #app {
@@ -6,5 +16,130 @@ body,
 }
 
 body {
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: "Noto Sans SC", "IBM Plex Sans", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.el-button--primary {
+  --el-button-bg-color: var(--copper);
+  --el-button-border-color: var(--copper);
+  --el-button-hover-bg-color: var(--copper-deep);
+  --el-button-hover-border-color: var(--copper-deep);
+  --el-button-active-bg-color: var(--copper-deep);
+}
+
+.el-pagination.is-background .el-pager li.is-active {
+  background-color: var(--copper);
+}
+
+.shop-shell {
+  --ink: #f4ece2;
+  --paper: #110e0c;
+  --panel: #1b1613;
+  --line: #3c322b;
+  --copper: #e07a3a;
+  --copper-deep: #ff9b5c;
+  --mute: #c9b6a2;
+  --ticket: #f3ece3;
+  --ticket-ink: #1a1512;
+  --ticket-mute: #6d6156;
+  --el-color-primary: #e07a3a;
+  --el-color-primary-light-3: #f09458;
+  --el-color-primary-light-5: #f3b07d;
+  --el-color-primary-light-7: #f6c9a6;
+  --el-color-primary-light-9: #2a1c14;
+  --el-color-primary-dark-2: #c45c28;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.shop-shell .el-card {
+  --el-card-bg-color: var(--panel);
+  --el-card-border-color: var(--line);
+  --el-card-border-radius: 0;
+  color: var(--ink);
+}
+
+.shop-shell .el-empty__description p {
+  color: var(--mute);
+}
+
+.shop-shell .el-input__wrapper,
+.shop-shell .el-textarea__inner {
+  background: #1f1916;
+  box-shadow: 0 0 0 1px var(--line) inset;
+}
+
+.shop-shell .el-input__inner,
+.shop-shell .el-textarea__inner {
+  color: var(--ink);
+}
+
+.shop-shell .el-radio-button__inner {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--mute);
+}
+
+.shop-shell .el-radio-button__original-radio:checked + .el-radio-button__inner {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: #1a120c;
+  box-shadow: none;
+}
+
+.shop-shell .el-collapse {
+  --el-collapse-header-bg-color: transparent;
+  --el-collapse-content-bg-color: transparent;
+  --el-collapse-header-text-color: var(--mute);
+  --el-collapse-content-text-color: var(--ink);
+  border-color: var(--line);
+}
+
+.shop-shell .el-collapse-item__header,
+.shop-shell .el-collapse-item__wrap {
+  background: transparent;
+  border-color: var(--line);
+  color: inherit;
+}
+
+.shop-shell .el-table {
+  --el-table-bg-color: var(--panel);
+  --el-table-tr-bg-color: var(--panel);
+  --el-table-header-bg-color: #221c18;
+  --el-table-text-color: var(--ink);
+  --el-table-header-text-color: var(--mute);
+  --el-table-border-color: var(--line);
+  --el-table-row-hover-bg-color: #261f1b;
+}
+
+.shop-shell .el-pagination {
+  --el-pagination-button-bg-color: var(--panel);
+  --el-pagination-button-color: var(--ink);
+}
+
+.shop-shell a {
+  color: var(--copper-deep);
+}
+
+.shop-shell .auth-card .el-form-item__label {
+  color: var(--ticket-ink);
+}
+
+.shop-shell .auth-card .el-input__wrapper,
+.shop-shell .auth-card .el-textarea__inner {
+  background: #fff;
+  box-shadow: 0 0 0 1px #d8cdc0 inset;
+}
+
+.shop-shell .auth-card .el-input__inner {
+  color: var(--ticket-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-shell * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

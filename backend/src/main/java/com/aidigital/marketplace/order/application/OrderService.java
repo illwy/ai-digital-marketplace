@@ -2,6 +2,7 @@ package com.aidigital.marketplace.order.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -49,7 +50,11 @@ public class OrderService {
         ProductEntity product = catalogService.requireOnSale(productId);
         OrderEntity pending = orderMapper.findPendingByUserAndProduct(userId, productId);
         if (pending != null) {
-            throw new ApiException(HttpStatus.CONFLICT, "ORDER_PENDING", "该商品已有未支付订单");
+            throw new ApiException(
+                    HttpStatus.CONFLICT,
+                    "ORDER_PENDING",
+                    "该商品已有未支付订单",
+                    Map.of("orderId", pending.getId()));
         }
         LocalDateTime now = LocalDateTime.now();
         OrderEntity order = new OrderEntity();
@@ -80,11 +85,12 @@ public class OrderService {
     }
 
     public ListResponse<OrderView> listMine(Long userId, int page, int pageSize) {
-        return list(userId, null, null, page, pageSize);
+        return list(userId, null, null, null, page, pageSize);
     }
 
-    public ListResponse<OrderView> listAdmin(String payStatus, String deliveryStatus, int page, int pageSize) {
-        return list(null, payStatus, deliveryStatus, page, pageSize);
+    public ListResponse<OrderView> listAdmin(
+            String payStatus, String deliveryStatus, String orderNo, int page, int pageSize) {
+        return list(null, payStatus, deliveryStatus, orderNo, page, pageSize);
     }
 
     public OrderView getMine(Long userId, Long id) {
@@ -170,12 +176,14 @@ public class OrderService {
         }
     }
 
-    private ListResponse<OrderView> list(Long userId, String payStatus, String deliveryStatus, int page, int pageSize) {
+    private ListResponse<OrderView> list(
+            Long userId, String payStatus, String deliveryStatus, String orderNo, int page, int pageSize) {
         Page<OrderEntity> mp = PageQuery.of(page, pageSize);
         LambdaQueryWrapper<OrderEntity> query = new LambdaQueryWrapper<OrderEntity>()
                 .eq(userId != null, OrderEntity::getUserId, userId)
                 .eq(payStatus != null && !payStatus.isBlank(), OrderEntity::getPayStatus, payStatus)
                 .eq(deliveryStatus != null && !deliveryStatus.isBlank(), OrderEntity::getDeliveryStatus, deliveryStatus)
+                .eq(orderNo != null && !orderNo.isBlank(), OrderEntity::getOrderNo, orderNo.trim())
                 .orderByDesc(OrderEntity::getId);
         Page<OrderEntity> result = orderMapper.selectPage(mp, query);
         List<OrderView> items = result.getRecords().stream()

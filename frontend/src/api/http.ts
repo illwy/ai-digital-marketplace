@@ -31,6 +31,18 @@ export function readApiError(error: unknown): ApiErrorBody {
   return { code: 'NETWORK_ERROR', message: '网络异常，请稍后重试' }
 }
 
+export function formatApiError(error: unknown): string {
+  const body = readApiError(error)
+  if (typeof body.details === 'string' && body.details.trim()) {
+    return `${body.message}（${body.details}）`
+  }
+  return body.message
+}
+
+export function newIdempotencyKey(): string {
+  return crypto.randomUUID()
+}
+
 export const http = axios.create({
   baseURL: '/api/v1',
   timeout: 15000,

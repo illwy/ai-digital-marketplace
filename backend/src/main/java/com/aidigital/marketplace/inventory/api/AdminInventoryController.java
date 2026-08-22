@@ -35,9 +35,10 @@ public class AdminInventoryController {
     public ListResponse<InventoryView> list(
             @RequestParam(required = false) Long productId,
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long orderId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize) {
-        return inventoryService.list(productId, status, page, pageSize);
+        return inventoryService.list(productId, status, orderId, page, pageSize);
     }
 
     @PostMapping("/inventory-items")

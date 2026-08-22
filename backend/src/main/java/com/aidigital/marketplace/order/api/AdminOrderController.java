@@ -26,9 +26,10 @@ public class AdminOrderController {
     public ListResponse<OrderView> list(
             @RequestParam(required = false) String payStatus,
             @RequestParam(required = false) String deliveryStatus,
+            @RequestParam(required = false) String orderNo,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize) {
-        return orderService.listAdmin(payStatus, deliveryStatus, page, pageSize);
+        return orderService.listAdmin(payStatus, deliveryStatus, orderNo, page, pageSize);
     }
 
     @GetMapping("/{id}")

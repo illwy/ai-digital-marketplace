@@ -1,7 +1,7 @@
 export interface ApiErrorBody {
   code: string
   message: string
-  details?: string | null
+  details?: unknown
 }
 
 export interface ApiErrorResponse {
@@ -96,6 +96,8 @@ export interface DeliveryView {
   id: number
   orderId: number
   inventoryId: number
+  orderNo: string
+  productName: string
   status: string
   content: string
   remark: string | null
@@ -120,6 +122,8 @@ export interface AfterSaleView {
   id: number
   orderId: number
   userId: number
+  orderNo: string
+  productName: string
   reason: string
   status: string
   adminReply: string | null
@@ -133,4 +137,21 @@ export interface AdminUserView {
   status: string
   roles: string[]
   createdAt: string
+}
+
+export interface InventoryStatsView {
+  available: number
+  locked: number
+  sold: number
+  invalid: number
+}
+
+export interface AdminOverviewView {
+  userCount: number
+  productOnSaleCount: number
+  availableInventoryCount: number
+  pendingOrderCount: number
+  paidOrderCount: number
+  openAfterSaleCount: number
+  enabledAnnouncementCount: number
 }

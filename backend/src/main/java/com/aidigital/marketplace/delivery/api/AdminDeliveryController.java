@@ -27,8 +27,10 @@ public class AdminDeliveryController {
 
     @GetMapping
     public ListResponse<DeliveryView> list(
-            @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int pageSize) {
-        return deliveryService.listAdmin(page, pageSize);
+            @RequestParam(required = false) Long orderId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
+        return deliveryService.listAdmin(orderId, page, pageSize);
     }
 
     @PostMapping("/{id}/remarks")

@@ -1,17 +1,23 @@
 import { http } from './http'
 import type {
+  AdminOverviewView,
   AdminUserView,
   AfterSaleView,
   AnnouncementView,
   CategoryView,
   DataResponse,
   DeliveryView,
+  InventoryStatsView,
   InventoryView,
   ListResponse,
   OrderView,
   ProductView,
   WalletView,
 } from '../types/api'
+
+export function fetchAdminOverview() {
+  return http.get<DataResponse<AdminOverviewView>>('/admin/overview')
+}
 
 export function fetchAdminUsers(params: { username?: string; status?: string; page?: number }) {
   return http.get<ListResponse<AdminUserView>>('/admin/users', { params: { pageSize: 20, ...params } })
@@ -39,7 +45,12 @@ export function deleteCategory(id: number) {
   return http.delete(`/admin/categories/${id}`)
 }
 
-export function fetchAdminProducts(params: { categoryId?: number; status?: string; page?: number }) {
+export function fetchAdminProducts(params: {
+  categoryId?: number
+  status?: string
+  page?: number
+  pageSize?: number
+}) {
   return http.get<ListResponse<ProductView>>('/admin/products', { params: { pageSize: 20, ...params } })
 }
 
@@ -60,7 +71,11 @@ export function saveProduct(
     : http.post<DataResponse<ProductView>>('/admin/products', payload)
 }
 
-export function fetchInventory(params: { productId?: number; status?: string; page?: number }) {
+export function fetchInventoryStats(productId: number) {
+  return http.get<DataResponse<InventoryStatsView>>(`/admin/products/${productId}/inventory-stats`)
+}
+
+export function fetchInventory(params: { productId?: number; status?: string; orderId?: number; page?: number }) {
   return http.get<ListResponse<InventoryView>>('/admin/inventory-items', { params: { pageSize: 20, ...params } })
 }
 
@@ -72,16 +87,29 @@ export function invalidateInventory(id: number) {
   return http.post<DataResponse<InventoryView>>(`/admin/inventory-items/${id}/invalidate`)
 }
 
-export function fetchAdminOrders(params: { payStatus?: string; page?: number }) {
+export function fetchAdminOrders(params: {
+  payStatus?: string
+  deliveryStatus?: string
+  orderNo?: string
+  page?: number
+}) {
   return http.get<ListResponse<OrderView>>('/admin/orders', { params: { pageSize: 20, ...params } })
+}
+
+export function fetchAdminOrder(id: number) {
+  return http.get<DataResponse<OrderView>>(`/admin/orders/${id}`)
 }
 
 export function cancelAdminOrder(id: number) {
   return http.post<DataResponse<OrderView>>(`/admin/orders/${id}/cancel`)
 }
 
-export function fetchAdminDeliveries(page = 1) {
-  return http.get<ListResponse<DeliveryView>>('/admin/deliveries', { params: { page, pageSize: 20 } })
+export function fetchAdminDeliveries(params: { orderId?: number; page?: number } = {}) {
+  return http.get<ListResponse<DeliveryView>>('/admin/deliveries', { params: { pageSize: 20, page: 1, ...params } })
+}
+
+export function remarkAdminDelivery(id: number, remark: string) {
+  return http.post<DataResponse<DeliveryView>>(`/admin/deliveries/${id}/remarks`, { remark })
 }
 
 export function fetchAdminAnnouncements() {

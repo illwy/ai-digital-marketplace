@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="演示激活码封面">
+  <rect width="1200" height="800" fill="#f3eee4"/>
+  <rect x="140" y="180" width="920" height="440" rx="18" fill="#fffaf3" stroke="#b4532a" stroke-width="6"/>
+  <line x1="340" y1="180" x2="340" y2="620" stroke="#ddd4c4" stroke-width="4" stroke-dasharray="14 16"/>
+  <circle cx="340" cy="180" r="18" fill="#f3eee4"/>
+  <circle cx="340" cy="620" r="18" fill="#f3eee4"/>
+  <rect x="420" y="280" width="560" height="28" fill="#1c1916"/>
+  <rect x="420" y="340" width="380" height="18" fill="#c4a574"/>
+  <circle cx="240" cy="400" r="46" fill="#b4532a"/>
+</svg>

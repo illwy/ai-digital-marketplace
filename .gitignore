@@ -36,3 +36,6 @@ dist/
 # Test / coverage
 coverage/
 *.lcov
+
+# Local verification artifacts
+output/

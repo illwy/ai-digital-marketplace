@@ -30,7 +30,7 @@ async function onLogout(): Promise<void> {
 <template>
   <el-container class="admin-shell">
     <el-aside width="220px" class="admin-aside">
-      <div class="admin-brand">运营后台</div>
+      <div class="admin-brand">钥市运营后台</div>
       <el-menu :key="active" :default-active="active" router>
         <el-menu-item v-for="item in menus" :key="item.path" :index="item.path">
           {{ item.label }}
@@ -45,7 +45,7 @@ async function onLogout(): Promise<void> {
           <el-button text @click="onLogout">退出</el-button>
         </div>
       </el-header>
-      <el-main>
+      <el-main class="admin-main">
         <RouterView />
       </el-main>
     </el-container>
@@ -55,6 +55,11 @@ async function onLogout(): Promise<void> {
 <style scoped>
 .admin-shell {
   min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.admin-main {
+  padding: 20px 24px 32px;
 }
 
 .admin-aside {

@@ -67,11 +67,12 @@ public class InventoryService {
         return created;
     }
 
-    public ListResponse<InventoryView> list(Long productId, String status, int page, int pageSize) {
+    public ListResponse<InventoryView> list(Long productId, String status, Long orderId, int page, int pageSize) {
         Page<InventoryEntity> mp = PageQuery.of(page, pageSize);
         LambdaQueryWrapper<InventoryEntity> query = new LambdaQueryWrapper<InventoryEntity>()
                 .eq(productId != null, InventoryEntity::getProductId, productId)
                 .eq(status != null && !status.isBlank(), InventoryEntity::getStatus, status)
+                .eq(orderId != null, InventoryEntity::getOrderId, orderId)
                 .orderByDesc(InventoryEntity::getId);
         Page<InventoryEntity> result = inventoryMapper.selectPage(mp, query);
         List<InventoryView> items = result.getRecords().stream().map(InventoryView::from).toList();

@@ -1,6 +1,8 @@
-# AI 数字商品自动售卖平台
+# 钥市 · 数字商品自动交付原型
 
-自营数字商品商城：浏览、下单、支付后自动交付虚拟库存。无物流。
+打开 http://localhost:8088 即可演示：货架浏览 → 下单 → **立即交付（演示）** → 「已购资源」看卡密。不接入微信/支付宝，也不做真实收款。
+
+演示管理员见 `.env` 的 `ADMIN_USERNAME` / `ADMIN_PASSWORD`。建议先买「演示激活码」（1 元）。
 
 ## 技术栈
 
@@ -79,6 +81,6 @@ docker compose --env-file .env -f docker/docker-compose.yml down -v
 docker compose --env-file .env -f docker/docker-compose.yml up --build
 ```
 
-启动后会种子一条演示商品「演示激活码」。支付第一版只用钱包和沙箱，不接入支付宝/微信商户。
+启动后会补种演示货架（账号月卡 / 激活码 / API 额度）和一条站点说明。购买路径用「立即交付（演示）」，不接入支付宝/微信商户。
 
 CI：GitHub Actions 在 push / PR 时跑后端 `mvn test` 和前端 `npm run build`。

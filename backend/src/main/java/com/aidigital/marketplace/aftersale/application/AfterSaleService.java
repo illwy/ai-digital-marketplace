@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.aidigital.marketplace.aftersale.api.dto.AfterSaleView;
 import com.aidigital.marketplace.aftersale.infrastructure.entity.AfterSaleEntity;
 import com.aidigital.marketplace.aftersale.infrastructure.mapper.AfterSaleMapper;
+import com.aidigital.marketplace.order.api.dto.OrderView;
 import com.aidigital.marketplace.order.application.OrderService;
 import com.aidigital.marketplace.order.infrastructure.entity.OrderEntity;
 import com.aidigital.marketplace.shared.web.ApiException;
@@ -54,7 +55,7 @@ public class AfterSaleService {
         ticket.setUpdatedAt(LocalDateTime.now());
         afterSaleMapper.insert(ticket);
         orderService.markAftersaleOpen(orderId);
-        return AfterSaleView.from(ticket);
+        return toView(ticket);
     }
 
     public ListResponse<AfterSaleView> listMine(Long userId, int page, int pageSize) {
@@ -78,18 +79,27 @@ public class AfterSaleService {
         if ("CLOSED".equals(status)) {
             orderService.markAftersaleClosed(ticket.getOrderId());
         }
-        return AfterSaleView.from(ticket);
+        return toView(ticket);
     }
 
     private ListResponse<AfterSaleView> list(Long userId, String status, int page, int pageSize) {
         Page<AfterSaleEntity> mp = PageQuery.of(page, pageSize);
         LambdaQueryWrapper<AfterSaleEntity> query = new LambdaQueryWrapper<AfterSaleEntity>()
                 .eq(userId != null, AfterSaleEntity::getUserId, userId)
-                .eq(status != null && !status.isBlank(), AfterSaleEntity::getStatus, status)
                 .orderByDesc(AfterSaleEntity::getId);
+        if ("OPEN_ACTIVE".equals(status)) {
+            query.in(AfterSaleEntity::getStatus, List.of("OPEN", "PROCESSING"));
+        } else if (status != null && !status.isBlank()) {
+            query.eq(AfterSaleEntity::getStatus, status);
+        }
         Page<AfterSaleEntity> result = afterSaleMapper.selectPage(mp, query);
-        List<AfterSaleView> items = result.getRecords().stream().map(AfterSaleView::from).toList();
+        List<AfterSaleView> items = result.getRecords().stream().map(this::toView).toList();
         return new ListResponse<>(
                 items, Pagination.of((int) result.getCurrent(), (int) result.getSize(), result.getTotal()));
+    }
+
+    private AfterSaleView toView(AfterSaleEntity ticket) {
+        OrderView order = orderService.getAdmin(ticket.getOrderId());
+        return AfterSaleView.from(ticket, order.orderNo(), order.productName());
     }
 }

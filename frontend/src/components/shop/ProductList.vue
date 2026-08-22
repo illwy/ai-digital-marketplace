@@ -8,10 +8,17 @@ defineProps<{
 </script>
 
 <template>
-  <el-row v-if="products.length" :gutter="16">
-    <el-col v-for="product in products" :key="product.id" :xs="24" :sm="12" :md="8">
-      <ProductCard :product="product" />
-    </el-col>
-  </el-row>
-  <el-empty v-else description="暂无在售商品" />
+  <div v-if="products.length" class="product-grid">
+    <ProductCard v-for="product in products" :key="product.id" :product="product" />
+  </div>
+  <el-empty v-else description="这个卡种暂时没货" />
 </template>
+
+<style scoped>
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
+  padding: 6px 6px 2px 0;
+}
+</style>

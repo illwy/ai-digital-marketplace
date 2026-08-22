@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import RegisterForm from '../../components/auth/RegisterForm.vue'
-import { readApiError } from '../../api/http'
+import { formatApiError } from '../../api/http'
 import { useAuthStore } from '../../stores/auth'
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 const loading = ref(false)
 const errorMessage = ref('')
 
@@ -15,9 +16,10 @@ async function onSubmit(payload: { username: string; password: string; nickname:
   errorMessage.value = ''
   try {
     await auth.register(payload.username, payload.password, payload.nickname || undefined)
-    await router.replace('/')
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
+    await router.replace(redirect)
   } catch (error) {
-    errorMessage.value = readApiError(error).message
+    errorMessage.value = formatApiError(error)
   } finally {
     loading.value = false
   }
@@ -30,24 +32,51 @@ async function onSubmit(payload: { username: string; password: string; nickname:
     <RegisterForm :loading="loading" :error-message="errorMessage" @submit="onSubmit" />
     <p class="auth-switch">
       已有账号？
-      <RouterLink to="/login">去登录</RouterLink>
+      <RouterLink :to="{ path: '/login', query: route.query.redirect ? { redirect: String(route.query.redirect) } : {} }">
+        去登录
+      </RouterLink>
     </p>
   </el-card>
 </template>
 
 <style scoped>
 .auth-card {
+  position: relative;
   max-width: 420px;
-  margin: 48px auto;
+  margin: 56px auto;
+  overflow: visible !important;
+  background: var(--ticket) !important;
+  color: var(--ticket-ink);
+  border: 0 !important;
+}
+
+.auth-card::before,
+.auth-card::after {
+  content: "";
+  position: absolute;
+  left: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.auth-card::before {
+  top: 36px;
+}
+
+.auth-card::after {
+  bottom: 36px;
 }
 
 .auth-title {
   margin: 0 0 16px;
-  font-size: 20px;
+  font-family: "Noto Serif SC", serif;
+  font-size: 24px;
 }
 
 .auth-switch {
   margin-top: 16px;
-  color: #909399;
+  color: var(--ticket-mute);
 }
 </style>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Midjourney 年卡封面">
+  <rect width="1200" height="800" fill="#241c28"/>
+  <circle cx="380" cy="360" r="220" fill="#3d2a58"/>
+  <circle cx="640" cy="300" r="160" fill="#b4532a"/>
+  <circle cx="820" cy="480" r="190" fill="#c4a574"/>
+  <rect x="80" y="80" width="1040" height="640" fill="none" stroke="#efe4d2" stroke-width="2"/>
+  <rect x="90" y="620" width="180" height="18" fill="#efe4d2"/>
+</svg>

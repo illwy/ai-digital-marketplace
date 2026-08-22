@@ -12,6 +12,10 @@ import com.aidigital.marketplace.delivery.infrastructure.entity.DeliveryEntity;
 import com.aidigital.marketplace.delivery.infrastructure.mapper.DeliveryMapper;
 import com.aidigital.marketplace.inventory.infrastructure.entity.InventoryEntity;
 import com.aidigital.marketplace.inventory.infrastructure.mapper.InventoryMapper;
+import com.aidigital.marketplace.order.infrastructure.entity.OrderEntity;
+import com.aidigital.marketplace.order.infrastructure.entity.OrderItemEntity;
+import com.aidigital.marketplace.order.infrastructure.mapper.OrderItemMapper;
+import com.aidigital.marketplace.order.infrastructure.mapper.OrderMapper;
 import com.aidigital.marketplace.shared.web.ApiException;
 import com.aidigital.marketplace.shared.web.ContentMasker;
 import com.aidigital.marketplace.shared.web.ListResponse;
@@ -25,10 +29,18 @@ public class DeliveryService {
 
     private final DeliveryMapper deliveryMapper;
     private final InventoryMapper inventoryMapper;
+    private final OrderMapper orderMapper;
+    private final OrderItemMapper orderItemMapper;
 
-    public DeliveryService(DeliveryMapper deliveryMapper, InventoryMapper inventoryMapper) {
+    public DeliveryService(
+            DeliveryMapper deliveryMapper,
+            InventoryMapper inventoryMapper,
+            OrderMapper orderMapper,
+            OrderItemMapper orderItemMapper) {
         this.deliveryMapper = deliveryMapper;
         this.inventoryMapper = inventoryMapper;
+        this.orderMapper = orderMapper;
+        this.orderItemMapper = orderItemMapper;
     }
 
     @Transactional
@@ -49,12 +61,12 @@ public class DeliveryService {
         return record;
     }
 
-    public ListResponse<DeliveryView> listMine(Long userId, int page, int pageSize) {
-        return list(userId, false, page, pageSize);
+    public ListResponse<DeliveryView> listMine(Long userId, Long orderId, int page, int pageSize) {
+        return list(userId, orderId, false, page, pageSize);
     }
 
-    public ListResponse<DeliveryView> listAdmin(int page, int pageSize) {
-        return list(null, true, page, pageSize);
+    public ListResponse<DeliveryView> listAdmin(Long orderId, int page, int pageSize) {
+        return list(null, orderId, false, page, pageSize);
     }
 
     public DeliveryView getMine(Long userId, Long id) {
@@ -73,10 +85,11 @@ public class DeliveryService {
         return toView(record, true);
     }
 
-    private ListResponse<DeliveryView> list(Long userId, boolean maskContent, int page, int pageSize) {
+    private ListResponse<DeliveryView> list(Long userId, Long orderId, boolean maskContent, int page, int pageSize) {
         Page<DeliveryEntity> mp = PageQuery.of(page, pageSize);
         LambdaQueryWrapper<DeliveryEntity> query = new LambdaQueryWrapper<DeliveryEntity>()
                 .eq(userId != null, DeliveryEntity::getUserId, userId)
+                .eq(orderId != null, DeliveryEntity::getOrderId, orderId)
                 .orderByDesc(DeliveryEntity::getId);
         Page<DeliveryEntity> result = deliveryMapper.selectPage(mp, query);
         List<DeliveryView> items =
@@ -91,10 +104,15 @@ public class DeliveryService {
         if (mask) {
             content = ContentMasker.mask(content);
         }
+        OrderEntity order = orderMapper.selectById(record.getOrderId());
+        OrderItemEntity item = orderItemMapper.selectOne(
+                new LambdaQueryWrapper<OrderItemEntity>().eq(OrderItemEntity::getOrderId, record.getOrderId()));
         return new DeliveryView(
                 record.getId(),
                 record.getOrderId(),
                 record.getInventoryId(),
+                order == null ? "" : order.getOrderNo(),
+                item == null ? "" : item.getProductName(),
                 record.getStatus(),
                 content,
                 record.getRemark(),
