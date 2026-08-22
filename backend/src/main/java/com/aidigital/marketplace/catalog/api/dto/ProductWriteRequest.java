@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 public record ProductWriteRequest(
         @NotNull Long categoryId,
         @NotBlank @Size(max = 128) String name,
-        @Size(max = 4000) String description,
+        @Size(max = 20000) String description,
         @Size(max = 512) String coverUrl,
         @NotNull @Min(0) Integer priceFen,
         @NotBlank @Pattern(regexp = "ACCOUNT|LICENSE|TOKEN|TEXT") String deliveryType,

@@ -7,6 +7,7 @@ import { readApiError } from '../../api/http'
 import { useAuthStore } from '../../stores/auth'
 import { deliveryTypeLabel } from '../../utils/labels'
 import { formatFen } from '../../utils/money'
+import { renderMarkdown } from '../../utils/markdown'
 import type { ProductView } from '../../types/api'
 import FoilBadge from '../../components/shop/FoilBadge.vue'
 
@@ -21,6 +22,7 @@ const coverFailed = ref(false)
 
 const productId = computed(() => Number(route.params.id))
 const soldOut = computed(() => (product.value?.availableCount ?? 0) < 1)
+const renderedDescription = computed(() => renderMarkdown(product.value?.description))
 
 async function load(): Promise<void> {
   loading.value = true
@@ -102,7 +104,7 @@ watch(productId, load)
       </p>
       <p v-else class="detail-sold-out">售罄，请等待补货</p>
 
-      <p class="detail-desc">{{ product.description || '暂无描述' }}</p>
+      <p class="detail-desc md" v-html="renderedDescription"></p>
 
       <div class="detail-notice">
         <p class="detail-notice-title">购买须知</p>

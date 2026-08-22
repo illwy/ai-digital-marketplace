@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
+import type { ComponentPublicInstance } from 'vue'
 import { useRoute } from 'vue-router'
 import { motion } from 'motion-v'
 import { ElMessage } from 'element-plus'
-import { fetchAdminCategories, fetchAdminProducts, saveProduct } from '../../api/admin'
+import type { UploadRequestOptions } from 'element-plus'
+import { fetchAdminCategories, fetchAdminProducts, saveProduct, uploadProductImage } from '../../api/admin'
 import { readApiError } from '../../api/http'
 import FoilBadge from '../../components/shop/FoilBadge.vue'
 import { deliveryTypeLabel, productStatusLabel } from '../../utils/labels'
 import { formatFen } from '../../utils/money'
+import { renderMarkdown } from '../../utils/markdown'
 import type { CategoryView, ProductView } from '../../types/api'
 
 const route = useRoute()
@@ -31,6 +34,35 @@ const form = reactive({
   deliveryType: 'LICENSE',
   status: 'ON_SALE',
 })
+
+// ---------- 描述编辑器：Markdown + 图片上传 ----------
+const descInputRef = ref<ComponentPublicInstance | null>(null)
+const uploadingImage = ref(false)
+const descriptionPreview = computed(() => renderMarkdown(form.description))
+
+async function onUploadImage(options: UploadRequestOptions): Promise<unknown> {
+  uploadingImage.value = true
+  try {
+    const { data } = await uploadProductImage(options.file as File)
+    const markdown = `![商品图片](${data.data.url})\n`
+    const root = descInputRef.value?.$el as HTMLElement | undefined
+    const textarea = (root?.querySelector('textarea') ?? null) as HTMLTextAreaElement | null
+    if (textarea?.selectionStart != null) {
+      const start = textarea.selectionStart
+      const end = textarea.selectionEnd ?? start
+      form.description = form.description.slice(0, start) + markdown + form.description.slice(end)
+    } else {
+      form.description = (form.description ? form.description.replace(/\n*$/, '\n\n') : '') + markdown
+    }
+    ElMessage.success('图片已插入描述')
+    return data.data.url
+  } catch (error) {
+    ElMessage.error(readApiError(error).message)
+    return Promise.reject(error)
+  } finally {
+    uploadingImage.value = false
+  }
+}
 
 function categoryName(id: number): string {
   return categories.value.find((item) => item.id === id)?.name ?? String(id)
@@ -269,7 +301,26 @@ onMounted(async () => {
         </el-select>
       </el-form-item>
       <el-form-item label="描述">
-        <el-input v-model="form.description" type="textarea" :rows="3" />
+        <div class="desc-editor">
+          <div class="desc-toolbar">
+            <el-upload
+              :show-file-list="false"
+              :http-request="onUploadImage"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+            >
+              <el-button size="small" :loading="uploadingImage">插入图片</el-button>
+            </el-upload>
+            <span class="desc-hint">支持 Markdown：**加粗**、## 标题、![图片](链接)；图片可直接上传</span>
+          </div>
+          <el-input
+            ref="descInputRef"
+            v-model="form.description"
+            type="textarea"
+            :rows="8"
+            class="desc-input font-mono"
+          />
+          <div v-if="form.description.trim()" class="desc-preview md" v-html="descriptionPreview"></div>
+        </div>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -280,6 +331,38 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.desc-editor {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.desc-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.desc-hint {
+  color: var(--mute);
+  font-size: 12px;
+}
+
+.desc-input :deep(textarea) {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.desc-preview {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--line-strong);
+  background: var(--surface);
+  max-height: 260px;
+  overflow-y: auto;
+}
 .page {
   display: flex;
   flex-direction: column;

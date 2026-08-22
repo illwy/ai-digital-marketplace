@@ -19,6 +19,14 @@ export function fetchAdminOverview() {
   return http.get<DataResponse<AdminOverviewView>>('/admin/overview')
 }
 
+export function uploadProductImage(file: File) {
+  const formData = new FormData()
+  formData.append('file', file)
+  return http.post<DataResponse<{ url: string }>>('/admin/uploads', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}
+
 export function fetchAdminUsers(params: { username?: string; status?: string; page?: number }) {
   return http.get<ListResponse<AdminUserView>>('/admin/users', { params: { pageSize: 20, ...params } })
 }

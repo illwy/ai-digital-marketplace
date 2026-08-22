@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: marketplace
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3307}/${MYSQL_DATABASE:marketplace}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
     username: ${MYSQL_USER:marketplace}
@@ -57,3 +61,5 @@ app:
   login:
     max-attempts: 10
     window-seconds: 600
+  upload:
+    dir: ${UPLOAD_DIR:./uploads}

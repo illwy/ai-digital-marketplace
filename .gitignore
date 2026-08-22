@@ -39,3 +39,9 @@ coverage/
 
 # Local verification artifacts
 output/
+
+# Local test images
+frontend/public/test-upload.jpg
+Œ¢–≈Õº∆¨_*
+*.jpg
+!frontend/public/covers/*
