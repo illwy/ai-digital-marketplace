@@ -90,6 +90,13 @@ export interface PaymentView {
   channel: string
   amountFen: number
   status: string
+  paymentHtml?: string | null
+}
+
+export interface PayChannelView {
+  alipayEnabled: boolean
+  walletEnabled: boolean
+  sandboxEnabled: boolean
 }
 
 export interface DeliveryView {

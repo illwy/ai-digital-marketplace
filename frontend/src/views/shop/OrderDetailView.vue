@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { motion } from 'motion-v'
 import CardSecretPanel from '../../components/shop/CardSecretPanel.vue'
 import FoilBadge from '../../components/shop/FoilBadge.vue'
@@ -14,6 +14,7 @@ import { expireCountdown } from '../../utils/time'
 import type { DeliveryView, OrderView } from '../../types/api'
 
 const route = useRoute()
+const router = useRouter()
 const walletStore = useWalletStore()
 const { wallet } = storeToRefs(walletStore)
 const order = ref<OrderView | null>(null)
@@ -182,9 +183,10 @@ watch(order, tick, { immediate: true })
     <p v-if="errorMessage" class="page-error">{{ errorMessage }}</p>
 
     <div v-if="canPay" class="actions">
-      <el-button type="primary" size="large" class="pay-main" :loading="paying" @click="pay('SANDBOX')">
-        确认付款并出卡 ⚡
+      <el-button type="primary" size="large" class="pay-main" @click="router.push(`/orders/${order.id}/pay`)">
+        支付宝付款
       </el-button>
+      <el-button size="large" :loading="paying" @click="pay('SANDBOX')">演示出卡</el-button>
       <el-button size="large" :loading="paying" @click="pay('WALLET')">钱包支付</el-button>
       <el-button size="large" @click="topup">钱包充值 ¥10</el-button>
       <el-button size="large" text @click="onCancel">取消订单</el-button>

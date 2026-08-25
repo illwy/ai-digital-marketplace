@@ -7,6 +7,7 @@ import type {
   DeliveryView,
   ListResponse,
   OrderView,
+  PayChannelView,
   PaymentView,
   ProductView,
   WalletView,
@@ -48,12 +49,33 @@ export function cancelOrder(id: number) {
   return http.post<DataResponse<OrderView>>(`/orders/${id}/cancel`)
 }
 
-export function payOrder(id: number, channel: 'WALLET' | 'SANDBOX') {
+export function payOrder(id: number, channel: 'WALLET' | 'SANDBOX' | 'ALIPAY') {
   return http.post<DataResponse<PaymentView>>(
     `/orders/${id}/payments`,
     { channel },
     { headers: { 'Idempotency-Key': newIdempotencyKey() } },
   )
+}
+
+export function fetchPayChannels() {
+  return http.get<DataResponse<PayChannelView>>('/payments/channels')
+}
+
+export function syncAlipayPayment(orderId: number) {
+  return http.post<DataResponse<PaymentView>>(`/orders/${orderId}/payments/sync`)
+}
+
+export function submitAlipayForm(paymentHtml: string, target = 'alipayCashier'): void {
+  const container = document.createElement('div')
+  container.innerHTML = paymentHtml
+  container.style.display = 'none'
+  document.body.appendChild(container)
+  const form = container.querySelector('form')
+  if (form) {
+    form.setAttribute('target', target)
+    form.submit()
+  }
+  window.setTimeout(() => container.remove(), 2000)
 }
 
 export function fetchDeliveries(params: { orderId?: number; page?: number } = {}) {

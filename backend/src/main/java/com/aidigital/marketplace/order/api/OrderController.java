@@ -79,4 +79,9 @@ public class OrderController {
                 () -> paymentService.pay(user.getId(), id, request.channel()));
         return new DataResponse<>(view);
     }
+
+    @PostMapping("/{id}/payments/sync")
+    public DataResponse<PaymentView> syncAlipay(@AuthenticationPrincipal AuthUser user, @PathVariable Long id) {
+        return new DataResponse<>(paymentService.syncAlipay(user.getId(), id));
+    }
 }

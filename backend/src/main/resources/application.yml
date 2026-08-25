@@ -63,3 +63,11 @@ app:
     window-seconds: 600
   upload:
     dir: ${UPLOAD_DIR:./uploads}
+  alipay:
+    app-id: ${ALIPAY_APP_ID:}
+    private-key: ${ALIPAY_PRIVATE_KEY:}
+    alipay-public-key: ${ALIPAY_PUBLIC_KEY:}
+    server-url: ${ALIPAY_SERVER_URL:https://openapi-sandbox.dl.alipaydev.com/gateway.do}
+    notify-url: ${ALIPAY_NOTIFY_URL:}
+    return-url-base: ${ALIPAY_RETURN_URL_BASE:http://localhost:8088}
+    seller-id: ${ALIPAY_SELLER_ID:}

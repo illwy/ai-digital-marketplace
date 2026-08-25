@@ -6,6 +6,7 @@ import HomeView from '../views/shop/HomeView.vue'
 import ProductDetailView from '../views/shop/ProductDetailView.vue'
 import OrderListView from '../views/shop/OrderListView.vue'
 import OrderDetailView from '../views/shop/OrderDetailView.vue'
+import AlipayPayView from '../views/shop/AlipayPayView.vue'
 import DeliveryListView from '../views/shop/DeliveryListView.vue'
 import DeliveryDetailView from '../views/shop/DeliveryDetailView.vue'
 import AfterSaleListView from '../views/shop/AfterSaleListView.vue'
@@ -34,6 +35,7 @@ const router = createRouter({
         { path: 'register', name: 'register', component: RegisterView, meta: { guestOnly: true } },
         { path: 'orders', name: 'orders', component: OrderListView, meta: { requiresAuth: true } },
         { path: 'orders/:id', name: 'order-detail', component: OrderDetailView, meta: { requiresAuth: true } },
+        { path: 'orders/:id/pay', name: 'alipay-pay', component: AlipayPayView, meta: { requiresAuth: true } },
         { path: 'deliveries', name: 'deliveries', component: DeliveryListView, meta: { requiresAuth: true } },
         { path: 'deliveries/:id', name: 'delivery-detail', component: DeliveryDetailView, meta: { requiresAuth: true } },
         { path: 'after-sales', name: 'after-sales', component: AfterSaleListView, meta: { requiresAuth: true } },

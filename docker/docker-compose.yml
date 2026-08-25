@@ -56,6 +56,13 @@ services:
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
       UPLOAD_DIR: /app/uploads
+      ALIPAY_APP_ID: ${ALIPAY_APP_ID:-}
+      ALIPAY_PRIVATE_KEY: ${ALIPAY_PRIVATE_KEY:-}
+      ALIPAY_PUBLIC_KEY: ${ALIPAY_PUBLIC_KEY:-}
+      ALIPAY_SERVER_URL: ${ALIPAY_SERVER_URL:-https://openapi-sandbox.dl.alipaydev.com/gateway.do}
+      ALIPAY_NOTIFY_URL: ${ALIPAY_NOTIFY_URL:-}
+      ALIPAY_RETURN_URL_BASE: ${ALIPAY_RETURN_URL_BASE:-http://localhost:8088}
+      ALIPAY_SELLER_ID: ${ALIPAY_SELLER_ID:-}
     volumes:
       - uploads_data:/app/uploads
     ports:
