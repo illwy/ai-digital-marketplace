@@ -1,13 +1,13 @@
 services:
   mysql:
-    ports: []
+    ports: !reset []
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci --innodb-buffer-pool-size=256M
   redis:
-    ports: []
+    ports: !reset []
   backend:
-    ports: []
+    ports: !reset []
     environment:
       JAVA_TOOL_OPTIONS: -Xms256m -Xmx768m
   nginx:
-    ports:
+    ports: !override
       - "80:80"
