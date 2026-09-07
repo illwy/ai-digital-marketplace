@@ -5,6 +5,7 @@ const DELIVERY_TYPE_LABELS: Record<string, string> = {
   LICENSE: '卡密',
   TOKEN: '额度',
   TEXT: '文本',
+  NODE_SUBSCRIPTION: '节点订阅',
 }
 
 const PAY_STATUS_LABELS: Record<string, string> = {
@@ -23,6 +24,7 @@ const PAY_STATUS_TAGS: Record<string, StatusTagType> = {
 
 const DELIVERY_STATUS_LABELS: Record<string, string> = {
   WAITING: '待交付',
+  PROVISIONING: '节点开通中',
   DELIVERED: '已交付',
   FAILED: '交付失败',
 }

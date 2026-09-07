@@ -10,6 +10,7 @@ import AlipayPayView from '../views/shop/AlipayPayView.vue'
 import DeliveryListView from '../views/shop/DeliveryListView.vue'
 import DeliveryDetailView from '../views/shop/DeliveryDetailView.vue'
 import AfterSaleListView from '../views/shop/AfterSaleListView.vue'
+import NodeSubscriptionListView from '../views/shop/NodeSubscriptionListView.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import RegisterView from '../views/auth/RegisterView.vue'
 import DashboardView from '../views/admin/DashboardView.vue'
@@ -39,6 +40,7 @@ const router = createRouter({
         { path: 'deliveries', name: 'deliveries', component: DeliveryListView, meta: { requiresAuth: true } },
         { path: 'deliveries/:id', name: 'delivery-detail', component: DeliveryDetailView, meta: { requiresAuth: true } },
         { path: 'after-sales', name: 'after-sales', component: AfterSaleListView, meta: { requiresAuth: true } },
+        { path: 'node-subscriptions', name: 'node-subscriptions', component: NodeSubscriptionListView, meta: { requiresAuth: true } },
       ],
     },
     {

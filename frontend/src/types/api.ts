@@ -111,6 +111,18 @@ export interface DeliveryView {
   deliveredAt: string
 }
 
+export interface NodeSubscriptionView {
+  id: number
+  productId: number
+  clientName: string
+  trafficBytes: number
+  deviceLimit: number
+  expiresAt: string
+  subscriptionUrl: string
+  clashConfig: string
+  status: string
+}
+
 export interface WalletView {
   userId: number
   balanceFen: number

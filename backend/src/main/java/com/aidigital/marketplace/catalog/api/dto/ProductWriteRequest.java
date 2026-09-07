@@ -12,5 +12,5 @@ public record ProductWriteRequest(
         @Size(max = 20000) String description,
         @Size(max = 512) String coverUrl,
         @NotNull @Min(0) Integer priceFen,
-        @NotBlank @Pattern(regexp = "ACCOUNT|LICENSE|TOKEN|TEXT") String deliveryType,
+        @NotBlank @Pattern(regexp = "ACCOUNT|LICENSE|TOKEN|TEXT|NODE_SUBSCRIPTION") String deliveryType,
         @NotBlank @Pattern(regexp = "DRAFT|ON_SALE|OFF_SALE") String status) {}

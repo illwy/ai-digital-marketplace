@@ -53,6 +53,7 @@ watch(
         <template v-if="auth.isAuthenticated">
           <RouterLink class="shop-nav-link" to="/orders">订单</RouterLink>
           <RouterLink class="shop-nav-link" to="/deliveries">卡密</RouterLink>
+          <RouterLink class="shop-nav-link" to="/node-subscriptions">节点</RouterLink>
           <RouterLink class="shop-nav-link" to="/after-sales">售后</RouterLink>
           <RouterLink v-if="auth.isAdmin" class="shop-nav-link" to="/admin">后台</RouterLink>
           <span v-if="wallet" class="shop-wallet">

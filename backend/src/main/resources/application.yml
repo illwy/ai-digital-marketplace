@@ -71,3 +71,8 @@ app:
     notify-url: ${ALIPAY_NOTIFY_URL:}
     return-url-base: ${ALIPAY_RETURN_URL_BASE:http://localhost:8088}
     seller-id: ${ALIPAY_SELLER_ID:}
+  node:
+    enabled: ${NODE_2SUI_ENABLED:false}
+    api-base-url: ${NODE_2SUI_API_BASE_URL:}
+    web-path: ${NODE_2SUI_WEB_PATH:/app/}
+    api-token: ${NODE_2SUI_API_TOKEN:}

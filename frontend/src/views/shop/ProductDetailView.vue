@@ -99,8 +99,8 @@ watch(productId, load)
       <h2 class="detail-title">{{ product.name }}</h2>
       <p class="detail-price font-mono">{{ formatFen(product.priceFen) }}</p>
 
-      <p v-if="!soldOut" class="detail-meta">
-        <span class="detail-stock-dot"></span>现货 {{ product.availableCount }} 件 · 一单一件
+        <p v-if="!soldOut" class="detail-meta">
+          <span class="detail-stock-dot"></span>{{ product.deliveryType === 'NODE_SUBSCRIPTION' ? '在线开通 · 支付后自动交付' : `现货 ${product.availableCount} 件 · 一单一件` }}
       </p>
       <p v-else class="detail-sold-out">售罄，请等待补货</p>
 
@@ -108,7 +108,7 @@ watch(productId, load)
 
       <div class="detail-notice">
         <p class="detail-notice-title">购买须知</p>
-        <p class="detail-notice-body">付款成功后自动出卡。卡密当场显示，也可在「卡密」里再复制。发出后请自行保管。</p>
+        <p class="detail-notice-body">{{ product.deliveryType === 'NODE_SUBSCRIPTION' ? '付款成功后由后台自动开通 2S-UI 节点，完成后在「节点」页面复制订阅地址。' : '付款成功后自动出卡。卡密当场显示，也可在「卡密」里再复制。发出后请自行保管。' }}</p>
       </div>
 
       <p v-if="errorMessage" class="detail-error">{{ errorMessage }}</p>
