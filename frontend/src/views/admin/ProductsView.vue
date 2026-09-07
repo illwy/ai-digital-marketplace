@@ -291,6 +291,7 @@ onMounted(async () => {
           <el-option label="账号" value="ACCOUNT" />
           <el-option label="额度" value="TOKEN" />
           <el-option label="文本" value="TEXT" />
+          <el-option label="节点订阅" value="NODE_SUBSCRIPTION" />
         </el-select>
       </el-form-item>
       <el-form-item label="状态">

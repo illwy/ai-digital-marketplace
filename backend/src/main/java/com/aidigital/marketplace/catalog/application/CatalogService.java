@@ -117,6 +117,11 @@ public class CatalogService {
         return entity;
     }
 
+    /** Used by paid-order workers after a product may have been taken off sale. */
+    public ProductEntity requireAny(Long id) {
+        return requireProduct(id);
+    }
+
     @Transactional
     public ProductView createProduct(ProductWriteRequest request) {
         requireCategory(request.categoryId());
@@ -152,7 +157,10 @@ public class CatalogService {
     }
 
     private ProductView toView(ProductEntity entity) {
-        return ProductView.from(entity, inventoryService.countAvailable(entity.getId()));
+        long available = "NODE_SUBSCRIPTION".equals(entity.getDeliveryType())
+                ? 1
+                : inventoryService.countAvailable(entity.getId());
+        return ProductView.from(entity, available);
     }
 
     private CategoryEntity requireCategory(Long id) {

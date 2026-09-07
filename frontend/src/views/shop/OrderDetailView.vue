@@ -130,8 +130,9 @@ watch(order, tick, { immediate: true })
     <p class="issued-copy font-mono">{{ order.orderNo }} · {{ formatFen(order.amountFen) }}</p>
     <p v-if="errorMessage" class="page-error">{{ errorMessage }}</p>
     <CardSecretPanel v-if="delivery?.content" :content="delivery.content" hint="请立即复制并自行保存。" />
-    <p v-else class="page-error">卡密加载失败，请到「卡密」页查看。</p>
-    <RouterLink class="issued-link" to="/deliveries">查看我的卡密 →</RouterLink>
+    <p v-else class="page-error">节点订阅或卡密正在准备，请打开对应的交付页面。</p>
+    <RouterLink v-if="delivery?.content" class="issued-link" to="/deliveries">查看我的卡密 →</RouterLink>
+    <RouterLink v-else class="issued-link" to="/node-subscriptions">查看我的节点订阅 →</RouterLink>
 
     <el-collapse class="aftersale-fold">
       <el-collapse-item title="卡密有问题？提交售后" name="aftersale">

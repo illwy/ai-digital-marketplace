@@ -10,6 +10,7 @@ import type {
   PayChannelView,
   PaymentView,
   ProductView,
+  NodeSubscriptionView,
   WalletView,
 } from '../types/api'
 
@@ -80,6 +81,14 @@ export function submitAlipayForm(paymentHtml: string, target = 'alipayCashier'):
 
 export function fetchDeliveries(params: { orderId?: number; page?: number } = {}) {
   return http.get<ListResponse<DeliveryView>>('/deliveries', { params: { pageSize: 20, page: 1, ...params } })
+}
+
+export function fetchNodeSubscriptions() {
+  return http.get<DataResponse<NodeSubscriptionView[]>>('/node-subscriptions')
+}
+
+export function fetchNodeSubscription(id: number) {
+  return http.get<DataResponse<NodeSubscriptionView>>(`/node-subscriptions/${id}`)
 }
 
 export function fetchDelivery(id: number) {

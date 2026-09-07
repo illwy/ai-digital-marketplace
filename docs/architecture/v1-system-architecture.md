@@ -28,6 +28,7 @@
         ├─ 支付中心 payment
         ├─ 钱包中心 wallet
         ├─ 交付中心 delivery
+        ├─ 节点订阅 node（2S-UI API 适配与异步开通）
         ├─ 售后中心 aftersale
         ├─ 公告中心 cms
         └─ 公共能力 shared
@@ -47,6 +48,13 @@
 | 售后中心 | 售后单与人工处理 | 用户提交、管理员处理 | 不自动退库存（第一版人工） |
 | 公告中心 | 站点公告 | 前台列表、后台维护 | 不参与购买事务 |
 | 公共能力 | 统一错误体、分页、幂等、鉴权注解、限流 | 被各模块使用 | 无业务表 |
+
+节点商品补充约束：
+
+- `NODE_SUBSCRIPTION` 不占用 `virtual_inventory`，订单支付后进入 `PROVISIONING`。
+- `node_provision_job` 以 `(order_id, action)` 唯一约束支付回调幂等，后台任务最多重试 5 次。
+- `node_subscription` 保存用户与 2S-UI 客户端映射、到期时间和订阅地址；续费复用同一客户端。
+- 适配器只调用 2S-UI API v2，不直接改 2S-UI 数据库；普通商品仍走库存与 delivery_record。
 
 第一版约束：
 
@@ -138,7 +146,7 @@ MySQL 8，`utf8mb4` / `utf8mb4_0900_ai_ci`。主键 `BIGINT UNSIGNED` 自增。�
 | description | 详情文案 |
 | cover_url | 封面 |
 | price_fen | 售价（分） |
-| delivery_type | ACCOUNT / LICENSE / TOKEN / TEXT |
+| delivery_type | ACCOUNT / LICENSE / TOKEN / TEXT / NODE_SUBSCRIPTION |
 | status | DRAFT / ON_SALE / OFF_SALE |
 | created_at / updated_at | |
 

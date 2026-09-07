@@ -77,11 +77,19 @@ public class OrderService {
         item.setQuantity(1);
         orderItemMapper.insert(item);
 
-        InventoryEntity locked = inventoryService.lockOne(productId, order.getId());
-        order.setInventoryId(locked.getId());
-        order.setUpdatedAt(LocalDateTime.now());
-        orderMapper.updateById(order);
+        if (!"NODE_SUBSCRIPTION".equals(product.getDeliveryType())) {
+            InventoryEntity locked = inventoryService.lockOne(productId, order.getId());
+            order.setInventoryId(locked.getId());
+            order.setUpdatedAt(LocalDateTime.now());
+            orderMapper.updateById(order);
+        }
         return toView(order, item);
+    }
+
+    public boolean isNodeSubscription(OrderEntity order) {
+        OrderItemEntity item = requireItem(order.getId());
+        ProductEntity product = catalogService.requireAny(item.getProductId());
+        return "NODE_SUBSCRIPTION".equals(product.getDeliveryType());
     }
 
     public ListResponse<OrderView> listMine(Long userId, int page, int pageSize) {

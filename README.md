@@ -1,8 +1,8 @@
-# 钥市 · 数字商品自动交付原型
+# 钥市 · 数字商品自动交付平台
 
-打开 http://localhost:8088 即可演示：货架浏览 → 下单 → **立即交付（演示）** → 「已购资源」看卡密。不接入微信/支付宝，也不做真实收款。
+打开 http://localhost:8088 可演示普通数字商品的货架、下单和交付。节点商品使用 `NODE_SUBSCRIPTION` 类型：付款成功后由后台任务调用 2S-UI API v2 开通，用户在「节点」页面获取订阅地址。普通卡密/文本商品仍使用原有虚拟库存流程。
 
-演示管理员见 `.env` 的 `ADMIN_USERNAME` / `ADMIN_PASSWORD`。建议先买「演示激活码」（1 元）。
+演示管理员见 `.env` 的 `ADMIN_USERNAME` / `ADMIN_PASSWORD`。支付渠道仍可使用 `SANDBOX` / 钱包做联调；真实支付宝配置按环境变量填写。
 
 ## 技术栈
 
@@ -70,7 +70,6 @@ mvn test
 
 - 前端（经 Nginx）：http://localhost:8088
 - API 探活：http://localhost:8088/api/v1/ping
-- 后端直连：http://localhost:8081/actuator/health
 - MySQL：localhost:3307 / marketplace
 - Redis：localhost:6379
 
@@ -84,3 +83,28 @@ docker compose --env-file .env -f docker/docker-compose.yml up --build
 启动后会补种演示货架（账号月卡 / 激活码 / API 额度）和一条站点说明。购买路径用「立即交付（演示）」，不接入支付宝/微信商户。
 
 CI：GitHub Actions 在 push / PR 时跑后端 `mvn test` 和前端 `npm run build`。
+
+## 2S-UI 节点商品配置
+
+先在后台创建商品并把交付方式设为「节点订阅」，再调用管理员接口配置该商品对应的 2S-UI 面板和入站：
+
+```http
+POST /api/v1/admin/node-plans
+Authorization: Bearer <admin-access-token>
+Content-Type: application/json
+
+{
+  "productId": 12,
+  "apiBaseUrl": "https://panel.example.com",
+  "webPath": "/app/",
+  "inboundIdsJson": "[1,2]",
+  "trafficBytes": 322122547200,
+  "durationDays": 30,
+  "deviceLimit": 3,
+  "enabled": true
+}
+```
+
+后端环境变量只保存 2S-UI API Token，不写入数据库或 Git：`NODE_2SUI_ENABLED=true`、`NODE_2SUI_API_TOKEN=...`。适配器只使用 `/app/apiv2/clients` 和 `/app/apiv2/save`，不读取 2S-UI 数据库。支付回调先落库并创建唯一开通任务，任务失败会自动重试；用户可通过 `GET /api/v1/node-subscriptions` 查看订阅地址和协议链接。
+
+上线前请先用测试用户和测试节点验证创建、续费、到期禁用及重复回调；不要把生产服务器地址、节点密钥或其他基础设施信息提交到公开仓库。

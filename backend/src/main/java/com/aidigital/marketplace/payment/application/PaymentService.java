@@ -15,6 +15,7 @@ import com.aidigital.marketplace.delivery.application.DeliveryService;
 import com.aidigital.marketplace.inventory.application.InventoryService;
 import com.aidigital.marketplace.order.application.OrderService;
 import com.aidigital.marketplace.order.infrastructure.entity.OrderEntity;
+import com.aidigital.marketplace.node.application.NodeProvisioningService;
 import com.aidigital.marketplace.payment.api.dto.PayChannelView;
 import com.aidigital.marketplace.payment.api.dto.PaymentView;
 import com.aidigital.marketplace.payment.infrastructure.entity.PaymentEntity;
@@ -36,6 +37,7 @@ public class PaymentService {
     private final InventoryService inventoryService;
     private final DeliveryService deliveryService;
     private final AlipayGateway alipayGateway;
+    private final NodeProvisioningService nodeProvisioningService;
 
     public PaymentService(
             PaymentMapper paymentMapper,
@@ -43,13 +45,15 @@ public class PaymentService {
             WalletService walletService,
             InventoryService inventoryService,
             DeliveryService deliveryService,
-            AlipayGateway alipayGateway) {
+            AlipayGateway alipayGateway,
+            NodeProvisioningService nodeProvisioningService) {
         this.paymentMapper = paymentMapper;
         this.orderService = orderService;
         this.walletService = walletService;
         this.inventoryService = inventoryService;
         this.deliveryService = deliveryService;
         this.alipayGateway = alipayGateway;
+        this.nodeProvisioningService = nodeProvisioningService;
     }
 
     public PayChannelView channels() {
@@ -201,6 +205,12 @@ public class PaymentService {
         }
         payment.setUpdatedAt(LocalDateTime.now());
         paymentMapper.updateById(payment);
+
+        if (orderService.isNodeSubscription(order)) {
+            nodeProvisioningService.enqueuePaidOrder(order);
+            orderService.markPaidAndDeliver(order, "PROVISIONING");
+            return;
+        }
 
         boolean sold = order.getInventoryId() != null
                 && inventoryService.markSold(order.getInventoryId(), order.getId());
