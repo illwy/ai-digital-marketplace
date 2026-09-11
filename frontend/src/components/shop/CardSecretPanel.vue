@@ -52,10 +52,10 @@ onMounted(() => {
   margin-top: 16px;
   border-radius: 18px;
   background:
-    linear-gradient(160deg, rgba(34, 211, 238, 0.1), rgba(139, 92, 246, 0.12) 55%, rgba(244, 114, 182, 0.08)),
+    linear-gradient(160deg, rgba(47, 143, 219, 0.1), rgba(18, 179, 154, 0.12) 55%, rgba(11, 125, 109, 0.08)),
     var(--bg-raised);
-  border: 1px solid rgba(34, 211, 238, 0.35);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(47, 143, 219, 0.35);
+  box-shadow: 0 16px 40px rgba(22, 48, 43, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   overflow: hidden;
 }
 
@@ -76,7 +76,7 @@ onMounted(() => {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
 }
 
 .secret-pulse {
@@ -100,8 +100,8 @@ onMounted(() => {
   z-index: 1;
   margin: 0;
   padding: 16px 18px;
-  background: rgba(3, 4, 10, 0.75);
-  color: #d9f6fd;
+  background: #eef8f5;
+  color: var(--ink);
   white-space: pre-wrap;
   word-break: break-all;
   font-family: var(--font-mono);
@@ -122,9 +122,9 @@ onMounted(() => {
   background: linear-gradient(
     to bottom,
     transparent,
-    rgba(103, 232, 249, 0.28) 45%,
+    rgba(125, 188, 232, 0.28) 45%,
     rgba(255, 255, 255, 0.35) 50%,
-    rgba(103, 232, 249, 0.28) 55%,
+    rgba(125, 188, 232, 0.28) 55%,
     transparent
   );
   animation: secret-scan 1.4s var(--ease-move) forwards;

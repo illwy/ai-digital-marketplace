@@ -100,7 +100,7 @@ watch(
 }
 
 .product-link:focus-visible {
-  outline: 2px solid var(--violet);
+  outline: 2px solid var(--gold);
   outline-offset: 4px;
 }
 
@@ -121,8 +121,8 @@ watch(
 @media (hover: hover) and (pointer: fine) {
   .product-link:hover .holo-card,
   .product-link:focus-visible .holo-card {
-    border-color: rgba(139, 92, 246, 0.55);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), var(--glow-violet);
+    border-color: rgba(18, 179, 154, 0.55);
+  box-shadow: 0 18px 40px rgba(22, 48, 43, 0.10), var(--glow-gold);
   }
 }
 
@@ -143,7 +143,8 @@ watch(
   z-index: 1;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(130deg, rgba(139, 92, 246, 0.7), transparent 30%, transparent 65%, rgba(34, 211, 238, 0.6));
+  background: var(--grad-foil);
+  background-size: 220% 220%;
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -152,7 +153,7 @@ watch(
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0;
+  opacity: 0.7;
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
@@ -173,7 +174,7 @@ watch(
   position: relative;
   height: 168px;
   overflow: hidden;
-  background: #0b0e1a;
+  background: #f3eee6;
 }
 
 .holo-cover-img,
@@ -193,15 +194,16 @@ watch(
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.45), transparent 60%),
-    radial-gradient(circle at 75% 80%, rgba(34, 211, 238, 0.35), transparent 55%),
+    radial-gradient(circle at 22% 18%, rgba(255, 93, 74, 0.38), transparent 55%),
+    radial-gradient(circle at 78% 20%, rgba(18, 179, 154, 0.40), transparent 58%),
+    radial-gradient(circle at 70% 82%, rgba(47, 143, 219, 0.38), transparent 55%),
     var(--bg-raised);
 }
 
 .holo-cover-fallback span {
   font-size: 44px;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(11, 125, 111, 0.28);
 }
 
 .holo-soldout {
@@ -209,7 +211,7 @@ watch(
   inset: auto 14px 14px auto;
   padding: 5px 12px;
   border-radius: 999px;
-  background: rgba(5, 6, 13, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   border: 1px solid var(--line-strong);
   color: var(--mute);
   font-size: 11px;
@@ -222,10 +224,10 @@ watch(
   bottom: 12px;
   padding: 4px 11px;
   border-radius: 999px;
-  background: rgba(5, 6, 13, 0.78);
-  border: 1px solid rgba(139, 92, 246, 0.5);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(18, 179, 154, 0.5);
   backdrop-filter: blur(8px);
-  color: var(--violet-soft);
+  color: var(--gold-soft);
   font-size: 12px;
 }
 
@@ -286,21 +288,21 @@ watch(
   margin: 0;
   font-size: 21px;
   font-weight: 600;
-  color: var(--cyan-soft);
+  color: var(--coral);
 }
 
 .holo-cta {
   padding: 7px 13px;
   border-radius: 999px;
-  background: var(--grad-primary);
-  color: #fff;
+  background: var(--grad-cta);
+  color: var(--on-accent);
   font-size: 12.5px;
   font-weight: 600;
   transition: box-shadow 0.25s var(--ease-out), transform 0.25s var(--ease-out);
 }
 
 .product-link:hover .holo-cta {
-  box-shadow: var(--glow-violet);
+  box-shadow: var(--glow-gold);
   transform: translateX(2px);
 }
 

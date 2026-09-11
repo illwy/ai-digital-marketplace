@@ -236,7 +236,7 @@ onMounted(async () => {
           <template #default="{ row }">
             <FoilBadge
               :label="productStatusLabel(row.status)"
-              :tone="row.status === 'ON_SALE' ? 'cyan' : row.status === 'DRAFT' ? 'mute' : 'warn'"
+              :tone="row.status === 'ON_SALE' ? 'azure' : row.status === 'DRAFT' ? 'mute' : 'warn'"
             />
           </template>
         </el-table-column>
@@ -424,7 +424,7 @@ onMounted(async () => {
 }
 
 .price-text {
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
   font-weight: 600;
 }
 

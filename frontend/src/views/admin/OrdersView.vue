@@ -320,7 +320,7 @@ onMounted(load)
 }
 
 .amount-text {
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
   font-weight: 600;
 }
 

@@ -118,7 +118,7 @@ const emit = defineEmits<{
   margin: 4px 0 0;
   font-size: 34px;
   font-weight: 800;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
 }
 
 .desk-amount-hint {

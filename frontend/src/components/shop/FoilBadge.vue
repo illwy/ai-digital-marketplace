@@ -2,9 +2,9 @@
 withDefaults(
   defineProps<{
     label: string
-    tone?: 'violet' | 'mute' | 'warn' | 'ok' | 'danger' | 'cyan'
+    tone?: 'gold' | 'mute' | 'warn' | 'ok' | 'danger' | 'azure'
   }>(),
-  { tone: 'violet' },
+  { tone: 'gold' },
 )
 </script>
 
@@ -26,13 +26,13 @@ withDefaults(
   white-space: nowrap;
 }
 
-.is-violet {
-  color: var(--violet-soft);
+.is-gold {
+  color: var(--gold-soft);
 }
 
 .is-copper,
-.is-cyan {
-  color: var(--cyan-soft);
+.is-azure {
+  color: var(--azure-soft);
 }
 
 .is-mute {

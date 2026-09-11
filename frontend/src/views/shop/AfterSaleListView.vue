@@ -13,12 +13,12 @@ const loading = ref(false)
 const page = ref(1)
 const total = ref(0)
 
-function statusTone(status: string): 'warn' | 'cyan' | 'ok' {
+function statusTone(status: string): 'warn' | 'azure' | 'ok' {
   if (status === 'CLOSED') {
     return 'ok'
   }
   if (status === 'PROCESSING') {
-    return 'cyan'
+    return 'azure'
   }
   return 'warn'
 }

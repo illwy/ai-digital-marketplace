@@ -34,9 +34,9 @@ watch(
   <div class="shop-shell">
     <!-- 极光氛围层 -->
     <div class="aurora" aria-hidden="true">
-      <div class="aurora-orb aurora-orb--violet"></div>
-      <div class="aurora-orb aurora-orb--cyan"></div>
-      <div class="aurora-orb aurora-orb--pink"></div>
+      <div class="aurora-orb aurora-orb--gold"></div>
+      <div class="aurora-orb aurora-orb--azure"></div>
+      <div class="aurora-orb aurora-orb--coral"></div>
       <div class="aurora-grid"></div>
     </div>
 
@@ -78,7 +78,16 @@ watch(
     </main>
     <footer class="shop-footer">
       <span class="shop-footer-line"></span>
-      钥市 · 虚拟库存 · 一单一件 · 出卡即复制
+      <div class="shop-footer-content">
+        <span>钥市 · 虚拟库存 · 一单一件 · 出卡即复制</span>
+        <a
+          class="shop-footer-icp"
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >豫ICP备2026043820号-1</a
+        >
+      </div>
       <span class="shop-footer-line"></span>
     </footer>
   </div>
@@ -106,34 +115,34 @@ watch(
   position: absolute;
   border-radius: 50%;
   filter: blur(90px);
-  opacity: 0.5;
+  opacity: 0.58;
   animation: aurora-drift 22s var(--ease-move) infinite;
 }
 
-.aurora-orb--violet {
+.aurora-orb--gold {
   width: 620px;
   height: 620px;
   top: -220px;
   left: -120px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.55), transparent 65%);
+  background: radial-gradient(circle, rgba(18, 179, 154, 0.55), transparent 65%);
 }
 
-.aurora-orb--cyan {
+.aurora-orb--azure {
   width: 520px;
   height: 520px;
   top: 8%;
   right: -180px;
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.4), transparent 65%);
+  background: radial-gradient(circle, rgba(47, 143, 219, 0.4), transparent 65%);
   animation-delay: -7s;
   animation-duration: 28s;
 }
 
-.aurora-orb--pink {
+.aurora-orb--coral {
   width: 420px;
   height: 420px;
   bottom: -160px;
   left: 32%;
-  background: radial-gradient(circle, rgba(244, 114, 182, 0.28), transparent 65%);
+  background: radial-gradient(circle, rgba(255, 179, 138, 0.55), transparent 65%);
   animation-delay: -14s;
   animation-duration: 34s;
 }
@@ -142,8 +151,8 @@ watch(
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(148, 163, 216, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 216, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(26, 36, 48, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 36, 48, 0.045) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 30%, transparent 75%);
   -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 30%, transparent 75%);
@@ -168,7 +177,7 @@ watch(
   gap: 12px 28px;
   padding: 14px 32px;
   border-bottom: 1px solid var(--line);
-  background: rgba(5, 6, 13, 0.72);
+  background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
@@ -189,11 +198,11 @@ watch(
   background: var(--grad-primary);
   background-size: 200% 200%;
   animation: grad-shift 6s ease infinite;
-  color: #fff;
+  color: var(--on-accent);
   font-size: 21px;
   font-weight: 700;
   border-radius: 12px;
-  box-shadow: var(--glow-violet);
+  box-shadow: var(--glow-gold);
 }
 
 .shop-brand-text {
@@ -237,9 +246,9 @@ watch(
 
 .shop-nav-link.router-link-active,
 .shop-nav-link.is-active {
-  color: #fff;
-  background: rgba(139, 92, 246, 0.18);
-  box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.4);
+  color: var(--gold-soft);
+  background: rgba(18, 179, 154, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(18, 179, 154, 0.4);
 }
 
 .shop-wallet {
@@ -249,9 +258,9 @@ watch(
   margin-left: 10px;
   padding: 6px 13px;
   border-radius: 999px;
-  border: 1px solid rgba(34, 211, 238, 0.35);
-  background: rgba(34, 211, 238, 0.08);
-  color: var(--cyan-soft);
+  border: 1px solid rgba(47, 143, 219, 0.35);
+  background: rgba(47, 143, 219, 0.08);
+  color: var(--azure-soft);
   font-family: var(--font-mono);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
@@ -261,8 +270,8 @@ watch(
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: var(--glow-cyan);
+  background: var(--azure);
+  box-shadow: var(--glow-azure);
   animation: pulse-glow 2.4s ease infinite;
 }
 
@@ -291,21 +300,21 @@ watch(
 .shop-nav-cta {
   padding: 8px 18px;
   margin-left: 6px;
-  background: var(--grad-primary);
+  background: var(--grad-cta);
   background-size: 180% 180%;
   animation: grad-shift 6s ease infinite;
-  color: #fff;
+  color: var(--on-accent);
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
   border-radius: 999px;
-  box-shadow: var(--glow-violet);
+  box-shadow: var(--glow-coral);
   transition: transform 0.2s var(--ease-out), box-shadow 0.25s var(--ease-out);
 }
 
 .shop-nav-cta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 36px rgba(139, 92, 246, 0.55);
+  box-shadow: 0 10px 28px rgba(255, 93, 74, 0.32);
 }
 
 /* ---------- 主区 ---------- */
@@ -352,6 +361,24 @@ watch(
 
 .shop-footer-line:last-child {
   transform: scaleX(-1);
+}
+
+.shop-footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.shop-footer-icp {
+  color: var(--mute);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: color 0.2s ease;
+}
+
+.shop-footer-icp:hover {
+  color: var(--gold-soft);
 }
 
 @media (max-width: 720px) {

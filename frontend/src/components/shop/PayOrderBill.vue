@@ -49,7 +49,7 @@ watch(coverUrl, () => {
         <span v-else class="bill-cover-fallback font-display">AI</span>
       </div>
       <div class="bill-product-copy">
-        <FoilBadge :label="deliveryType" tone="cyan" />
+        <FoilBadge :label="deliveryType" tone="azure" />
         <p class="bill-product-name">{{ order.productName }}</p>
         <p class="bill-product-sub">数字商品 · 一单一件 · 付款后立刻出卡</p>
       </div>
@@ -147,13 +147,13 @@ watch(coverUrl, () => {
   height: 40px;
   border-radius: 12px;
   background: var(--grad-primary);
-  color: #fff;
+  color: var(--on-accent);
   font-weight: 800;
 }
 
 .bill-kicker {
   margin: 0 0 4px;
-  color: var(--violet-soft);
+  color: var(--gold-soft);
   font-size: 12px;
   letter-spacing: 0.16em;
 }
@@ -180,7 +180,7 @@ watch(coverUrl, () => {
   height: 72px;
   overflow: hidden;
   border-radius: 12px;
-  background: #0b1020;
+  background: #ffffff;
 }
 
 .bill-cover-img {
@@ -193,7 +193,7 @@ watch(coverUrl, () => {
   display: grid;
   place-items: center;
   height: 100%;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
 }
 
 .bill-product-name {
@@ -215,7 +215,7 @@ watch(coverUrl, () => {
 .bill-product-price {
   margin: 0;
   font-size: 20px;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
   font-weight: 700;
 }
 
@@ -268,7 +268,7 @@ watch(coverUrl, () => {
   margin: 16px 0 0;
   padding: 14px 16px;
   border-radius: 14px;
-  background: rgba(103, 232, 249, 0.05);
+  background: rgba(125, 188, 232, 0.05);
   border: 1px solid var(--line);
 }
 
@@ -291,7 +291,7 @@ watch(coverUrl, () => {
 }
 
 .bill-lines-total span:last-child {
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
   font-size: 22px;
 }
 

@@ -234,10 +234,10 @@ watch(order, tick, { immediate: true })
   overflow: hidden;
   border-radius: 22px !important;
   background:
-    linear-gradient(160deg, rgba(34, 211, 238, 0.09), rgba(139, 92, 246, 0.12) 55%, rgba(244, 114, 182, 0.07)),
+    linear-gradient(160deg, rgba(47, 143, 219, 0.09), rgba(18, 179, 154, 0.12) 55%, rgba(11, 125, 109, 0.07)),
     var(--bg-raised) !important;
-  border: 1px solid rgba(34, 211, 238, 0.3) !important;
-  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(47, 143, 219, 0.3) !important;
+  box-shadow: 0 18px 40px rgba(22, 48, 43, 0.08), inset 0 1px 0 #fff;
   padding: 6px;
 }
 
@@ -249,7 +249,7 @@ watch(order, tick, { immediate: true })
   width: 60%;
   height: 200%;
   pointer-events: none;
-  background: radial-gradient(ellipse, rgba(139, 92, 246, 0.14), transparent 65%);
+  background: radial-gradient(ellipse, rgba(18, 179, 154, 0.14), transparent 65%);
 }
 
 .voucher-head {
@@ -279,7 +279,7 @@ watch(order, tick, { immediate: true })
 .issued-link {
   display: inline-block;
   margin-top: 14px;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
   text-decoration: none;
   font-size: 14px;
 }
@@ -329,7 +329,7 @@ watch(order, tick, { immediate: true })
   margin: 0;
   font-size: 26px;
   font-weight: 600;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
 }
 
 .countdown {

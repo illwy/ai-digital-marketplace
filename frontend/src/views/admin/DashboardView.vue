@@ -16,13 +16,13 @@ const cards: {
   title: string
   path: string
   query?: Record<string, string>
-  tone: 'violet' | 'cyan' | 'green' | 'amber' | 'danger' | 'mute'
+  tone: 'gold' | 'azure' | 'green' | 'amber' | 'danger' | 'mute'
 }[] = [
-  { key: 'userCount', title: '用户', path: '/admin/users', tone: 'violet' },
-  { key: 'productOnSaleCount', title: '在售商品', path: '/admin/products', query: { status: 'ON_SALE' }, tone: 'cyan' },
+  { key: 'userCount', title: '用户', path: '/admin/users', tone: 'gold' },
+  { key: 'productOnSaleCount', title: '在售商品', path: '/admin/products', query: { status: 'ON_SALE' }, tone: 'azure' },
   { key: 'availableInventoryCount', title: '可用库存', path: '/admin/inventory', query: { status: 'AVAILABLE' }, tone: 'green' },
   { key: 'pendingOrderCount', title: '待支付订单', path: '/admin/orders', query: { payStatus: 'PENDING' }, tone: 'amber' },
-  { key: 'paidOrderCount', title: '已支付订单', path: '/admin/orders', query: { payStatus: 'PAID' }, tone: 'cyan' },
+  { key: 'paidOrderCount', title: '已支付订单', path: '/admin/orders', query: { payStatus: 'PAID' }, tone: 'azure' },
   { key: 'openAfterSaleCount', title: '待处理售后', path: '/admin/after-sales', query: { status: 'OPEN_ACTIVE' }, tone: 'danger' },
   { key: 'enabledAnnouncementCount', title: '启用公告', path: '/admin/announcements', tone: 'mute' },
 ]
@@ -193,11 +193,11 @@ onMounted(load)
   transform: translateX(0);
 }
 
-.is-violet {
-  color: var(--violet-soft);
+.is-gold {
+  color: var(--gold-soft);
 }
-.is-cyan {
-  color: var(--cyan-soft);
+.is-azure {
+  color: var(--azure-soft);
 }
 .is-green {
   color: var(--green);
@@ -206,21 +206,21 @@ onMounted(load)
   color: var(--amber);
 }
 .is-danger {
-  color: var(--pink);
+  color: var(--gold);
 }
 .is-mute {
   color: var(--mute);
 }
 
-.is-violet:hover,
-.is-violet:focus-visible {
-  border-color: rgba(139, 92, 246, 0.55);
-  box-shadow: var(--glow-violet);
+.is-gold:hover,
+.is-gold:focus-visible {
+  border-color: rgba(18, 179, 154, 0.55);
+  box-shadow: var(--glow-gold);
 }
-.is-cyan:hover,
-.is-cyan:focus-visible {
-  border-color: rgba(34, 211, 238, 0.5);
-  box-shadow: var(--glow-cyan);
+.is-azure:hover,
+.is-azure:focus-visible {
+  border-color: rgba(47, 143, 219, 0.5);
+  box-shadow: var(--glow-azure);
 }
 .is-green:hover,
 .is-green:focus-visible {
@@ -234,8 +234,8 @@ onMounted(load)
 }
 .is-danger:hover,
 .is-danger:focus-visible {
-  border-color: rgba(244, 114, 182, 0.5);
-  box-shadow: 0 0 24px rgba(244, 114, 182, 0.28);
+  border-color: rgba(11, 125, 109, 0.5);
+  box-shadow: 0 0 24px rgba(11, 125, 109, 0.28);
 }
 .is-mute:hover,
 .is-mute:focus-visible {

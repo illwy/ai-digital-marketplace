@@ -33,8 +33,8 @@ defineProps<{
   gap: 13px;
   padding: 15px 18px;
   border-radius: 14px;
-  background: linear-gradient(120deg, rgba(34, 211, 238, 0.08), rgba(139, 92, 246, 0.06));
-  border: 1px solid rgba(34, 211, 238, 0.22);
+  background: linear-gradient(120deg, rgba(47, 143, 219, 0.08), rgba(18, 179, 154, 0.06));
+  border: 1px solid rgba(47, 143, 219, 0.22);
 }
 
 .announcement-bell {
@@ -49,7 +49,7 @@ defineProps<{
 .announcement-title {
   margin: 0 0 5px;
   font-size: 14px;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
 }
 
 .announcement-body {

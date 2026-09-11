@@ -30,8 +30,8 @@ async function onLogout(): Promise<void> {
 <template>
   <div class="admin-shell">
     <div class="admin-aurora" aria-hidden="true">
-      <span class="admin-orb admin-orb--violet"></span>
-      <span class="admin-orb admin-orb--cyan"></span>
+      <span class="admin-orb admin-orb--gold"></span>
+      <span class="admin-orb admin-orb--azure"></span>
     </div>
 
     <aside class="admin-aside">
@@ -104,20 +104,20 @@ async function onLogout(): Promise<void> {
   animation: aurora-drift 22s var(--ease-move) infinite;
 }
 
-.admin-orb--violet {
+.admin-orb--gold {
   width: 520px;
   height: 520px;
   top: -200px;
   left: -140px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.5), transparent 65%);
+  background: radial-gradient(circle, rgba(18, 179, 154, 0.5), transparent 65%);
 }
 
-.admin-orb--cyan {
+.admin-orb--azure {
   width: 460px;
   height: 460px;
   bottom: -180px;
   right: -120px;
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.35), transparent 65%);
+  background: radial-gradient(circle, rgba(47, 143, 219, 0.35), transparent 65%);
   animation-delay: -11s;
 }
 
@@ -132,7 +132,7 @@ async function onLogout(): Promise<void> {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--line);
-  background: rgba(10, 13, 24, 0.72);
+  background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
@@ -152,11 +152,11 @@ async function onLogout(): Promise<void> {
   background: var(--grad-primary);
   background-size: 200% 200%;
   animation: grad-shift 6s ease infinite;
-  color: #fff;
+  color: var(--on-accent);
   font-size: 20px;
   font-weight: 700;
   border-radius: 12px;
-  box-shadow: var(--glow-violet);
+  box-shadow: var(--glow-gold);
 }
 
 .admin-brand-text {
@@ -217,12 +217,12 @@ async function onLogout(): Promise<void> {
 
 .admin-nav-link.is-active {
   color: var(--ink);
-  background: rgba(139, 92, 246, 0.14);
+  background: rgba(18, 179, 154, 0.14);
 }
 
 .admin-nav-link.is-active .admin-nav-indicator {
   height: 18px;
-  box-shadow: var(--glow-violet);
+  box-shadow: var(--glow-gold);
 }
 
 .admin-aside-foot {
@@ -264,7 +264,7 @@ async function onLogout(): Promise<void> {
   gap: 12px;
   padding: 14px 32px;
   border-bottom: 1px solid var(--line);
-  background: rgba(5, 6, 13, 0.72);
+  background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
@@ -298,7 +298,7 @@ async function onLogout(): Promise<void> {
   place-items: center;
   border-radius: 50%;
   background: var(--grad-primary);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 12px;
   font-weight: 700;
 }

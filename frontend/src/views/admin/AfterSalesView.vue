@@ -158,7 +158,7 @@ onMounted(load)
             <FoilBadge
               :label="ticketStatusLabel(row.status)"
               :tone="
-                row.status === 'OPEN' ? 'warn' : row.status === 'PROCESSING' ? 'violet' : 'ok'
+                row.status === 'OPEN' ? 'warn' : row.status === 'PROCESSING' ? 'gold' : 'ok'
               "
             />
           </template>

@@ -128,7 +128,7 @@ onMounted(load)
 }
 
 .order-row:focus-visible {
-  outline: 2px solid var(--violet);
+  outline: 2px solid var(--gold);
   outline-offset: 4px;
   border-radius: 18px;
 }
@@ -141,7 +141,7 @@ onMounted(load)
   padding: 18px 20px;
   border-radius: 18px;
   background:
-    linear-gradient(160deg, rgba(139, 92, 246, 0.06), rgba(34, 211, 238, 0.04)),
+    linear-gradient(160deg, rgba(18, 179, 154, 0.06), rgba(47, 143, 219, 0.04)),
     var(--surface);
   border: 1px solid var(--line);
   backdrop-filter: blur(16px);
@@ -154,8 +154,8 @@ onMounted(load)
 .order-row:hover .order-card,
 .order-row:focus-visible .order-card {
   transform: translateY(-2px);
-  border-color: rgba(139, 92, 246, 0.55);
-  box-shadow: var(--glow-violet), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-color: rgba(18, 179, 154, 0.55);
+  box-shadow: var(--glow-gold), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   background-color: var(--surface-strong);
 }
 
@@ -177,7 +177,7 @@ onMounted(load)
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
   font-variant-numeric: tabular-nums;
 }
 
@@ -194,7 +194,7 @@ onMounted(load)
 }
 
 .order-row:hover .order-cta {
-  color: var(--violet-soft);
+  color: var(--gold-soft);
 }
 
 .page-pagination {

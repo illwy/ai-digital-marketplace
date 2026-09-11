@@ -66,10 +66,10 @@ async function onSubmit(payload: { username: string; password: string }): Promis
   border-radius: 20px;
   overflow: hidden !important;
   background:
-    linear-gradient(165deg, rgba(139, 92, 246, 0.1), rgba(34, 211, 238, 0.06) 60%),
+    linear-gradient(165deg, rgba(18, 179, 154, 0.1), rgba(47, 143, 219, 0.06) 60%),
     var(--bg-raised) !important;
   border: 1px solid var(--line-strong) !important;
-  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.55), var(--glow-violet), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(22, 48, 43, 0.10), var(--glow-gold), inset 0 1px 0 #fff;
 }
 
 .auth-card::before {

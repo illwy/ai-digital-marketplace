@@ -68,10 +68,10 @@ watch(id, load)
   padding: 24px;
   border-radius: 22px;
   background:
-    linear-gradient(160deg, rgba(34, 211, 238, 0.08), rgba(139, 92, 246, 0.1) 55%, rgba(244, 114, 182, 0.05)),
+    linear-gradient(160deg, rgba(47, 143, 219, 0.08), rgba(18, 179, 154, 0.1) 55%, rgba(11, 125, 109, 0.05)),
     var(--bg-raised);
-  border: 1px solid rgba(34, 211, 238, 0.3);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(47, 143, 219, 0.3);
+  box-shadow: 0 18px 40px rgba(22, 48, 43, 0.08), inset 0 1px 0 #fff;
 }
 
 .voucher-head {
@@ -104,7 +104,7 @@ watch(id, load)
 .order-link {
   display: inline-block;
   margin-top: 14px;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
   text-decoration: none;
   font-size: 14px;
 }

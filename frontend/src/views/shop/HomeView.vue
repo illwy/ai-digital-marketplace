@@ -110,6 +110,7 @@ onMounted(async () => {
       >
         <div class="hero-holo-card">
           <div class="hero-holo-shine"></div>
+          <span class="hero-holo-perf" aria-hidden="true"></span>
           <header>
             <span class="hero-holo-chip"></span>
             <span class="hero-holo-label">DELIVERED</span>
@@ -125,7 +126,12 @@ onMounted(async () => {
     </div>
 
     <ol class="hero-steps">
-      <li v-for="(step, index) in ['选卡', '下单', '出密']" :key="step" class="hero-step">
+      <li
+        v-for="(step, index) in ['选卡', '下单', '出密']"
+        :key="step"
+        class="hero-step"
+        :data-tone="['mint', 'sky', 'coral'][index]"
+      >
         <span class="hero-step-num font-display">{{ String(index + 1).padStart(2, '0') }}</span>
         <strong>{{ step }}</strong>
         <small>{{ ['看库存和类型', '锁住这一张', '复制并自己保存'][index] }}</small>
@@ -193,9 +199,9 @@ onMounted(async () => {
   margin: 0 0 18px;
   padding: 6px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(139, 92, 246, 0.4);
-  background: rgba(139, 92, 246, 0.1);
-  color: var(--violet-soft);
+  border: 1px solid rgba(18, 179, 154, 0.4);
+  background: rgba(18, 179, 154, 0.1);
+  color: var(--gold-soft);
   font-size: 12px;
   letter-spacing: 0.22em;
 }
@@ -205,8 +211,8 @@ onMounted(async () => {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--violet);
-  box-shadow: var(--glow-violet);
+  background: var(--gold);
+  box-shadow: var(--glow-gold);
 }
 
 .hero-title {
@@ -237,20 +243,20 @@ onMounted(async () => {
   align-items: center;
   padding: 12px 28px;
   border-radius: 999px;
-  background: var(--grad-primary);
+  background: var(--grad-cta);
   background-size: 180% 180%;
   animation: grad-shift 6s ease infinite;
-  color: #fff;
+  color: var(--on-accent);
   text-decoration: none;
   font-weight: 600;
   font-size: 15px;
-  box-shadow: var(--glow-violet);
+  box-shadow: var(--glow-coral);
   transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
 }
 
 .hero-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 44px rgba(139, 92, 246, 0.55);
+  box-shadow: 0 12px 28px rgba(255, 93, 74, 0.32);
 }
 
 .hero-cta--ghost {
@@ -262,8 +268,8 @@ onMounted(async () => {
 }
 
 .hero-cta--ghost:hover {
-  border-color: rgba(34, 211, 238, 0.55);
-  color: var(--cyan-soft);
+  border-color: rgba(47, 143, 219, 0.55);
+  color: var(--azure-soft);
   box-shadow: none;
 }
 
@@ -275,15 +281,47 @@ onMounted(async () => {
 .hero-holo-card {
   position: relative;
   overflow: hidden;
-  padding: 26px 26px 22px;
-  border-radius: 22px;
+  padding: 26px 26px 22px 38px;
+  border-radius: 6px 22px 22px 6px;
   background:
-    linear-gradient(160deg, rgba(139, 92, 246, 0.22), rgba(34, 211, 238, 0.12) 60%, rgba(244, 114, 182, 0.14)),
-    var(--bg-raised);
-  border: 1px solid rgba(148, 163, 216, 0.25);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    linear-gradient(165deg, #fff4e8 0%, #eefcf7 42%, #e7f1ff 100%);
+  border: 1px solid rgba(26, 36, 48, 0.12);
+  box-shadow:
+    10px 14px 0 var(--ink),
+    0 22px 40px rgba(26, 36, 48, 0.12);
   animation: float-soft 7s ease-in-out infinite;
   transform: rotate(-3deg);
+}
+
+.hero-holo-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: var(--grad-foil);
+  background-size: 220% 220%;
+  animation: grad-shift 8s ease infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.hero-holo-perf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 14px;
+  width: 14px;
+  background: radial-gradient(circle at 7px 10px, var(--bg) 5px, transparent 5.5px);
+  background-size: 14px 22px;
+  border-right: 1px dashed rgba(26, 36, 48, 0.18);
 }
 
 .hero-holo-shine {
@@ -291,7 +329,7 @@ onMounted(async () => {
   top: -30%;
   bottom: -30%;
   width: 45%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
   animation: shimmer-sweep 3.6s var(--ease-move) infinite;
   pointer-events: none;
 }
@@ -307,7 +345,7 @@ onMounted(async () => {
   width: 38px;
   height: 28px;
   border-radius: 7px;
-  background: var(--grad-primary);
+  background: var(--grad-foil);
   opacity: 0.9;
 }
 
@@ -315,7 +353,7 @@ onMounted(async () => {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.18em;
-  color: var(--green);
+  color: var(--coral);
 }
 
 .hero-holo-name {
@@ -329,11 +367,11 @@ onMounted(async () => {
   margin: 0 0 24px;
   padding: 10px 14px;
   border-radius: 10px;
-  background: rgba(5, 6, 13, 0.6);
+  background: rgba(15, 70, 62, 0.06);
   border: 1px dashed var(--line-strong);
   font-family: var(--font-mono);
   font-size: 13px;
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
 }
 
 .hero-holo-card footer {
@@ -344,7 +382,7 @@ onMounted(async () => {
 }
 
 .hero-holo-ok {
-  color: var(--green);
+  color: var(--gold-soft);
   font-weight: 600;
 }
 
@@ -374,19 +412,34 @@ onMounted(async () => {
 
 .hero-step:hover {
   transform: translateY(-3px);
-  border-color: rgba(139, 92, 246, 0.45);
-  box-shadow: var(--glow-violet);
 }
+
+.hero-step[data-tone="mint"] {
+  background: linear-gradient(180deg, #e8fbf6, #ffffff);
+  border-color: rgba(18, 179, 154, 0.28);
+}
+.hero-step[data-tone="sky"] {
+  background: linear-gradient(180deg, #eaf3ff, #ffffff);
+  border-color: rgba(47, 143, 219, 0.28);
+}
+.hero-step[data-tone="coral"] {
+  background: linear-gradient(180deg, #fff0eb, #ffffff);
+  border-color: rgba(255, 93, 74, 0.28);
+}
+
+.hero-step[data-tone="mint"]:hover { box-shadow: var(--glow-gold); }
+.hero-step[data-tone="sky"]:hover { box-shadow: var(--glow-azure); }
+.hero-step[data-tone="coral"]:hover { box-shadow: var(--glow-coral); }
 
 .hero-step-num {
   grid-row: span 2;
   font-size: 22px;
   font-weight: 800;
-  background: var(--grad-text);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
+
+.hero-step[data-tone="mint"] .hero-step-num { color: var(--gold-soft); }
+.hero-step[data-tone="sky"] .hero-step-num { color: var(--azure-soft); }
+.hero-step[data-tone="coral"] .hero-step-num { color: var(--coral); }
 
 .hero-step strong {
   font-size: 15px;
@@ -427,13 +480,13 @@ onMounted(async () => {
 
 .chip.is-on {
   border-color: transparent;
-  background: var(--grad-primary);
-  color: #fff;
-  box-shadow: var(--glow-violet);
+  background: var(--grad-cta);
+  color: var(--on-accent);
+  box-shadow: var(--glow-coral);
 }
 
 .chip:focus-visible {
-  outline: 2px solid var(--violet);
+  outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
 

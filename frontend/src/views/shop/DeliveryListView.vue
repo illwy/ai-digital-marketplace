@@ -102,7 +102,7 @@ onMounted(load)
   padding: 18px 18px 6px;
   border-radius: 18px;
   background:
-    linear-gradient(160deg, rgba(34, 211, 238, 0.05), rgba(139, 92, 246, 0.06)),
+    linear-gradient(160deg, rgba(47, 143, 219, 0.05), rgba(18, 179, 154, 0.06)),
     var(--surface);
   border: 1px solid var(--line);
   backdrop-filter: blur(16px);
@@ -114,8 +114,8 @@ onMounted(load)
 
 .secret-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(34, 211, 238, 0.5);
-  box-shadow: var(--glow-cyan), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-color: rgba(47, 143, 219, 0.5);
+  box-shadow: var(--glow-azure), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   background-color: var(--surface-strong);
 }
 
@@ -148,7 +148,7 @@ onMounted(load)
 }
 
 .secret-detail {
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
   text-decoration: none;
   font-size: 13.5px;
   white-space: nowrap;

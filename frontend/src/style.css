@@ -1,37 +1,44 @@
 /* ============================================================
-   钥市 · 深空流光主题
-   深空底色 + 紫/青能量色 + 玻璃面板 + 光效系统
+   钥市 · 晨光票券主题
+   浅纸底 + 薄荷绿品牌色 + 珊瑚红行动色 + 晴空蓝 + 全息描边
    ============================================================ */
 
 :root {
   /* 基底 */
-  --bg: #05060d;
-  --bg-raised: #0a0d18;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-strong: rgba(255, 255, 255, 0.07);
-  --line: rgba(148, 163, 216, 0.16);
-  --line-strong: rgba(148, 163, 216, 0.3);
+  --bg: #f6f4ef;
+  --bg-raised: #ffffff;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: #ffffff;
+  --line: rgba(40, 50, 60, 0.10);
+  --line-strong: rgba(40, 50, 60, 0.18);
 
   /* 墨色 */
-  --ink: #eef1fb;
-  --ink-soft: #c0c7de;
-  --mute: #8b93b2;
+  --ink: #1a2430;
+  --ink-soft: #3d4a58;
+  --mute: #6b7785;
 
-  /* 能量色 */
-  --violet: #8b5cf6;
-  --violet-soft: #a78bfa;
-  --cyan: #22d3ee;
-  --cyan-soft: #67e8f9;
-  --pink: #f472b6;
-  --amber: #fbbf24;
-  --green: #34d399;
-  --red: #fb7185;
+  /* 能量色：gold=薄荷绿品牌，coral=行动，azure=信息 */
+  --gold: #12b39a;
+  --gold-soft: #0b7d6f;
+  --azure: #2f8fdb;
+  --azure-soft: #1d6fb8;
+  --coral: #ff5d4a;
+  --coral-soft: #d94836;
+  --peach: #ffb38a;
+  --lemon: #f0c419;
+  --amber: #e8a317;
+  --green: #16a34a;
+  --red: #e11d48;
+  --on-accent: #ffffff;
 
   /* 渐变与光 */
-  --grad-primary: linear-gradient(135deg, #8b5cf6 0%, #6366f1 45%, #22d3ee 100%);
-  --grad-text: linear-gradient(120deg, #a78bfa 0%, #67e8f9 100%);
-  --glow-violet: 0 0 24px rgba(139, 92, 246, 0.35);
-  --glow-cyan: 0 0 24px rgba(34, 211, 238, 0.3);
+  --grad-primary: linear-gradient(135deg, #5eead4 0%, #12b39a 48%, #0b7d6d 100%);
+  --grad-cta: linear-gradient(135deg, #ff8a6b 0%, #ff5d4a 52%, #e23d3d 100%);
+  --grad-text: linear-gradient(120deg, #0b7d6f 0%, #2f8fdb 55%, #ff5d4a 100%);
+  --grad-foil: linear-gradient(120deg, #12b39a 0%, #2f8fdb 28%, #c084fc 52%, #ff5d4a 76%, #f0c419 100%);
+  --glow-gold: 0 10px 28px rgba(18, 179, 154, 0.22);
+  --glow-azure: 0 10px 28px rgba(47, 143, 219, 0.18);
+  --glow-coral: 0 10px 28px rgba(255, 93, 74, 0.28);
 
   /* 字体 */
   --font-display: "Unbounded", "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -49,31 +56,31 @@
   --z-toast: 1100;
 
   /* Element Plus 主色映射 */
-  --el-color-primary: #8b5cf6;
-  --el-color-primary-light-3: #a78bfa;
-  --el-color-primary-light-5: #bd9bfb;
-  --el-color-primary-light-7: #d6c5fc;
-  --el-color-primary-light-8: #e4d9fd;
-  --el-color-primary-light-9: #1d1630;
-  --el-color-primary-dark-2: #7c3aed;
-  --el-color-success: #34d399;
-  --el-color-warning: #fbbf24;
-  --el-color-danger: #fb7185;
-  --el-color-error: #fb7185;
-  --el-color-info: #8b93b2;
-  --el-bg-color: #0a0d18;
-  --el-bg-color-overlay: #10141f;
-  --el-text-color-primary: #eef1fb;
-  --el-text-color-regular: #c0c7de;
-  --el-text-color-secondary: #8b93b2;
-  --el-text-color-placeholder: #5d6580;
-  --el-border-color: rgba(148, 163, 216, 0.16);
-  --el-border-color-light: rgba(148, 163, 216, 0.12);
-  --el-border-color-lighter: rgba(148, 163, 216, 0.08);
-  --el-fill-color: rgba(255, 255, 255, 0.05);
-  --el-fill-color-light: rgba(255, 255, 255, 0.04);
-  --el-fill-color-lighter: rgba(255, 255, 255, 0.03);
-  --el-fill-color-blank: transparent;
+  --el-color-primary: #12b39a;
+  --el-color-primary-light-3: #3fc9b2;
+  --el-color-primary-light-5: #7ddbcb;
+  --el-color-primary-light-7: #b6eee4;
+  --el-color-primary-light-8: #d7f7f1;
+  --el-color-primary-light-9: #eefaf7;
+  --el-color-primary-dark-2: #0b7d6d;
+  --el-color-success: #16a34a;
+  --el-color-warning: #e8a317;
+  --el-color-danger: #e11d48;
+  --el-color-error: #e11d48;
+  --el-color-info: #6b817b;
+  --el-bg-color: #ffffff;
+  --el-bg-color-overlay: #ffffff;
+  --el-text-color-primary: #16302b;
+  --el-text-color-regular: #3d554f;
+  --el-text-color-secondary: #6b817b;
+  --el-text-color-placeholder: #93a8a3;
+  --el-border-color: rgba(20, 70, 60, 0.12);
+  --el-border-color-light: rgba(20, 70, 60, 0.09);
+  --el-border-color-lighter: rgba(20, 70, 60, 0.06);
+  --el-fill-color: #eef5f2;
+  --el-fill-color-light: #f5faf8;
+  --el-fill-color-lighter: #f8fcfb;
+  --el-fill-color-blank: #ffffff;
   --el-font-family: var(--font-body);
 }
 
@@ -92,7 +99,7 @@ body {
 }
 
 ::selection {
-  background: rgba(139, 92, 246, 0.4);
+  background: rgba(18, 179, 154, 0.28);
   color: #fff;
 }
 
@@ -105,12 +112,12 @@ body {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.35);
+  background: rgba(18, 179, 154, 0.35);
   border-radius: 8px;
   border: 2px solid var(--bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
+  background: rgba(18, 179, 154, 0.55);
 }
 
 /* ---------- 通用工具 ---------- */
@@ -143,35 +150,38 @@ body {
   border: 1px solid transparent;
   background:
     linear-gradient(var(--bg-raised), var(--bg-raised)) padding-box,
-    linear-gradient(135deg, rgba(139, 92, 246, 0.55), rgba(34, 211, 238, 0.35)) border-box;
+    linear-gradient(135deg, rgba(18, 179, 154, 0.55), rgba(47, 143, 219, 0.35)) border-box;
 }
 
 /* ---------- Element Plus 深度换肤 ---------- */
 
 .el-button {
   --el-button-border-color: var(--line-strong);
-  --el-button-hover-bg-color: rgba(139, 92, 246, 0.14);
-  --el-button-hover-border-color: rgba(139, 92, 246, 0.55);
-  --el-button-hover-text-color: var(--violet-soft);
+  --el-button-hover-bg-color: rgba(18, 179, 154, 0.10);
+  --el-button-hover-border-color: rgba(18, 179, 154, 0.45);
+  --el-button-hover-text-color: var(--gold-soft);
   border-radius: 10px;
   transition: box-shadow 0.25s var(--ease-out), transform 0.2s var(--ease-out),
     background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .el-button--primary {
-  --el-button-bg-color: #7c3aed;
-  --el-button-border-color: #7c3aed;
-  --el-button-hover-bg-color: #8b5cf6;
-  --el-button-hover-border-color: #8b5cf6;
-  --el-button-active-bg-color: #6d28d9;
-  --el-button-active-border-color: #6d28d9;
+  --el-button-bg-color: #12b39a;
+  --el-button-border-color: #12b39a;
+  --el-button-hover-bg-color: #1cc4aa;
+  --el-button-hover-border-color: #1cc4aa;
+  --el-button-active-bg-color: #0b7d6d;
+  --el-button-active-border-color: #0b7d6d;
+  --el-button-text-color: var(--on-accent);
+  --el-button-hover-text-color: var(--on-accent);
+  --el-button-active-text-color: var(--on-accent);
   background-image: var(--grad-primary);
   border: none;
   font-weight: 600;
 }
 
 .el-button--primary:hover {
-  box-shadow: var(--glow-violet);
+  box-shadow: var(--glow-gold);
   transform: translateY(-1px);
 }
 
@@ -194,7 +204,7 @@ body {
 
 .el-input__wrapper,
 .el-textarea__inner {
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
   box-shadow: 0 0 0 1px var(--line) inset !important;
   border-radius: 10px;
   transition: box-shadow 0.2s ease;
@@ -207,7 +217,7 @@ body {
 
 .el-input__wrapper.is-focus,
 .el-textarea__inner:focus {
-  box-shadow: 0 0 0 1.5px var(--violet) inset, var(--glow-violet) !important;
+  box-shadow: 0 0 0 1.5px var(--gold) inset, var(--glow-gold) !important;
 }
 
 .el-input__inner {
@@ -225,15 +235,15 @@ body {
 .el-table {
   --el-table-bg-color: transparent;
   --el-table-tr-bg-color: transparent;
-  --el-table-header-bg-color: rgba(255, 255, 255, 0.04);
+  --el-table-header-bg-color: #eef5f2;
   --el-table-text-color: var(--ink-soft);
   --el-table-header-text-color: var(--mute);
   --el-table-border-color: var(--line);
-  --el-table-row-hover-bg-color: rgba(139, 92, 246, 0.08);
+  --el-table-row-hover-bg-color: rgba(18, 179, 154, 0.08);
 }
 
 .el-table th.el-table__cell {
-  background: rgba(255, 255, 255, 0.04);
+  background: #eef5f2;
 }
 
 .el-pagination {
@@ -241,24 +251,24 @@ body {
   --el-pagination-text-color: var(--ink-soft);
   --el-pagination-button-bg-color: var(--surface);
   --el-pagination-button-color: var(--ink-soft);
-  --el-pagination-hover-color: var(--violet-soft);
+  --el-pagination-hover-color: var(--gold-soft);
 }
 
 .el-pagination.is-background .el-pager li.is-active {
   background: var(--grad-primary);
-  color: #fff;
-  box-shadow: var(--glow-violet);
+  color: var(--on-accent);
+  box-shadow: var(--glow-gold);
 }
 
 .el-dialog {
-  --el-dialog-bg-color: #0d1120;
+  --el-dialog-bg-color: #ffffff;
   border: 1px solid var(--line);
   border-radius: 20px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), var(--glow-violet);
+  box-shadow: 0 24px 80px rgba(22, 48, 43, 0.12), var(--glow-gold);
 }
 
 .el-message {
-  --el-message-bg-color: #141930;
+  --el-message-bg-color: #ffffff;
   --el-message-border-color: var(--line-strong);
   --el-message-text-color: var(--ink);
   border-radius: 12px;
@@ -283,8 +293,8 @@ body {
 .el-radio-button__original-radio:checked + .el-radio-button__inner {
   background: var(--grad-primary);
   border-color: transparent;
-  color: #fff;
-  box-shadow: var(--glow-violet);
+  color: var(--on-accent);
+  box-shadow: var(--glow-gold);
 }
 
 .el-collapse {
@@ -302,21 +312,21 @@ body {
 }
 
 .el-drawer {
-  --el-drawer-bg-color: #0d1120;
+  --el-drawer-bg-color: #ffffff;
 }
 
 .el-loading-mask {
-  background-color: rgba(5, 6, 13, 0.7);
+  background-color: rgba(243, 247, 245, 0.72);
   backdrop-filter: blur(4px);
 }
 
 .el-skeleton {
-  --el-skeleton-color: rgba(255, 255, 255, 0.06);
-  --el-skeleton-to-color: rgba(255, 255, 255, 0.12);
+  --el-skeleton-color: #e7efec;
+  --el-skeleton-to-color: #f6fbf9;
 }
 
 a {
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
 }
 
 /* ---------- Markdown 图文描述 ---------- */
@@ -377,8 +387,8 @@ a {
 .md blockquote {
   margin: 0.8em 0;
   padding: 8px 14px;
-  border-left: 3px solid var(--violet);
-  background: rgba(139, 92, 246, 0.08);
+  border-left: 3px solid var(--gold);
+  background: rgba(18, 179, 154, 0.08);
   border-radius: 0 8px 8px 0;
   color: var(--mute);
 }
@@ -394,7 +404,7 @@ a {
 .md pre {
   padding: 14px;
   border-radius: 10px;
-  background: rgba(3, 4, 10, 0.7);
+  background: #eef6f3;
   border: 1px solid var(--line);
   overflow-x: auto;
 }
@@ -422,7 +432,7 @@ a {
 }
 
 .md a {
-  color: var(--cyan-soft);
+  color: var(--azure-soft);
 }
 
 /* ---------- 关键帧 ---------- */

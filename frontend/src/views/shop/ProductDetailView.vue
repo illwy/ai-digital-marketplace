@@ -143,7 +143,7 @@ watch(productId, load)
   overflow: hidden;
   border-radius: 22px;
   border: 1px solid var(--line);
-  background: #0b0e1a;
+  background: #e8f3ef;
 }
 
 .detail-cover-img,
@@ -159,22 +159,22 @@ watch(productId, load)
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at 28% 22%, rgba(139, 92, 246, 0.5), transparent 62%),
-    radial-gradient(circle at 74% 78%, rgba(34, 211, 238, 0.38), transparent 58%),
+    radial-gradient(circle at 28% 22%, rgba(18, 179, 154, 0.5), transparent 62%),
+    radial-gradient(circle at 74% 78%, rgba(47, 143, 219, 0.38), transparent 58%),
     var(--bg-raised);
 }
 
 .detail-cover-fallback span {
   font-size: 64px;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(11, 125, 111, 0.28);
 }
 
 .detail-cover-glow {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(to top, rgba(5, 6, 13, 0.65), transparent 45%);
+  background: linear-gradient(to top, rgba(243, 247, 245, 0.92), transparent 50%);
 }
 
 /* ---------- 购买面板 ---------- */
@@ -197,8 +197,8 @@ watch(productId, load)
   margin: 0 0 12px;
   font-size: 34px;
   font-weight: 600;
-  color: var(--cyan-soft);
-  text-shadow: var(--glow-cyan);
+  color: var(--azure-soft);
+  text-shadow: var(--glow-azure);
 }
 
 .detail-meta {
@@ -241,13 +241,13 @@ watch(productId, load)
   margin: auto 0 20px;
   padding: 14px 16px;
   border-radius: 12px;
-  background: rgba(139, 92, 246, 0.07);
-  border: 1px dashed rgba(139, 92, 246, 0.4);
+  background: rgba(18, 179, 154, 0.07);
+  border: 1px dashed rgba(18, 179, 154, 0.4);
 }
 
 .detail-notice-title {
   margin: 0 0 6px;
-  color: var(--violet-soft);
+  color: var(--gold-soft);
   font-weight: 600;
   font-size: 13.5px;
 }
