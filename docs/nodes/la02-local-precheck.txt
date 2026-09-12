@@ -1,0 +1,36 @@
+LA02 Phase 0 local read-only precheck
+Date: 2026-09-03
+NODE_ID=LA02
+SERVER_IPV4=149.248.21.56
+Forbidden hosts: 104.238.140.225 / nvla.k8izuh.com (do not SSH, do not change DNS)
+
+Local observations:
+- NODE_FQDN confirmed by user: la02.k8izuh.com
+- la02.k8izuh.com A @1.1.1.1 and @8.8.8.8 = 149.248.21.56 (DNS only path looks correct)
+- nvla.k8izuh.com A @1.1.1.1 = 104.238.140.225 (LA01 unchanged)
+- TCP 22/80/443/2222 from this workstation AND from jump host 81.71.22.169 all timed out
+- On-box Ubuntu/hostname/ss/ufw/Reality handshake checks NOT run (no SSH path)
+- Root password was provided in chat; not written to repo files
+
+Inputs now held (not secrets):
+- ACME_EMAIL=yzrhw0218@163.com
+- NODE_FQDN=la02.k8izuh.com
+- SSH path: local SOCKS5 127.0.0.1:10808 (direct TCP 22 times out)
+
+On-box Phase 0 (2026-09-03, via SOCKS5):
+- hostname=vultr (not yet la02)
+- Ubuntu 24.04.4 LTS x86-64, kernel 6.8.0-138-generic, Vultr VHP
+- IPv4 149.248.21.56/23 on enp1s0; public egress 149.248.21.56
+- default route via 149.248.20.1
+- Mem ~955Mi; swapfile 2.3G already present, unused
+- disk / 23G, 27% used (usr 3.0G, var 420M) — stock Ubuntu, not a panel box
+- NTP UTC synced; no failed units
+- sshd listen 0.0.0.0:22; no 443/tcp or 443/udp listeners
+- no sing-box/xray/nginx/docker/mysql
+- UFW active: default deny in, allow 22/tcp only
+- Reality candidate www.microsoft.com: DNS+TCP443+cert CN=www.microsoft.com valid 2026-01-22..2027-01-17
+- Forbidden: did not contact 104.238.140.225 / nvla.k8izuh.com
+
+Phase 0 acceptance: PASS
+Next blocker for Phase 5: Cloudflare DNS API token file (A record already exists)
+Root password is not stored in this repo.

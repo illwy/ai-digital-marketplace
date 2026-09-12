@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "node_id": "LA02",
+  "capacity": 10,
+  "users": [
+    {
+      "user_id": "U001",
+      "enabled": true,
+      "vless_uuid": "<UUID>",
+      "hy2_password": "<RANDOM_PASSWORD>",
+      "created_at": "<UTC_ISO8601>",
+      "expires_at": null,
+      "note": null
+    }
+  ]
+}

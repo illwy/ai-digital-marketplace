@@ -45,3 +45,14 @@ frontend/public/test-upload.jpg
 Œ¢–≈Õº∆¨_*
 *.jpg
 !frontend/public/covers/*
+
+# Node infrastructure secrets
+infra/**/node-secrets.json
+infra/**/*.key
+infra/**/*.pem
+infra/**/*.token
+infra/**/secrets/
+
+# Python generated files
+__pycache__/
+*.py[cod]

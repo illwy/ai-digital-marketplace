@@ -1,0 +1,9 @@
+[Unit]
+Description=LA02 sing-box health probe
+After=sing-box.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/la02-health
+User=root
+Nice=10

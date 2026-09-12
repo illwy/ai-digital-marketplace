@@ -1,0 +1,43 @@
+LA02 historical old-VPS progress 2026-09-03 (no secrets)
+
+Done:
+- P0 precheck PASS (via SOCKS5 127.0.0.1:10808)
+- P1 hostname la02; deploy+root ed25519; password SSH disabled after key verify
+- P2 DNS la02.k8izuh.com A=149.248.21.56; no AAAA; nvla still 104.238.140.225
+- P3 sing-box 1.13.21 held; unit User=sing-box; service disabled/stopped; 443 idle
+- P4 node adapter installed; U001 users.json + node-secrets.json 0600; not started
+- BBR=bbr fq; journald limits installed
+
+Local SSH:
+- key ~/.ssh/la02_ed25519
+- Host la02 in ~/.ssh/config uses SOCKS ProxyCommand
+
+Ruling:
+- Ubuntu cloud-init /etc/ssh/sshd_config.d/50-cloud-init.conf set PasswordAuthentication yes
+  and won over 99-la02-hardening.conf (sshd first-value-wins). 50 was changed to no.
+
+P5 done 2026-09-04:
+- ECDSA cert la02.k8izuh.com, expires 2026-12-03, certbot dry-run OK
+- UFW: 22/tcp, 443/tcp, 443/udp
+- sing-box active; 0.0.0.0:443 TCP+UDP
+- U001 client files on server /root/la02-client-info/U001 and local ~/.secrets/la02-U001
+- apply candidate path moved to /run/la02 so -C /etc/sing-box does not merge it
+
+Historical next step at that time: Phase 6 client connectivity tests in Clash Verge Rev
+
+Replacement VPS update 2026-09-05:
+- Replacement server 45.63.95.89 provisioned; hostname la02; Ubuntu 24.04.4 LTS.
+- deploy and root ed25519 login verified; password and keyboard-interactive SSH disabled.
+- BBR/fq, swappiness=10, journald limits, UFW 22/tcp + 443/tcp + 443/udp applied.
+- la02.k8izuh.com DNS-only A changed to 45.63.95.89; 1.1.1.1 and 8.8.8.8 verified; no AAAA.
+- sing-box 1.13.21 installed, held, enabled, active; TCP+UDP 443 listening.
+- New Reality, Hysteria2, and U001 credentials generated on replacement host; data files 0600.
+- Reality handshake target changed from www.microsoft.com to www.cloudflare.com after controlled loopback comparison showed Microsoft rejected Reality while Cloudflare passed.
+- ECDSA certificate expires 2026-12-04; certbot renewal dry-run passed; timers active.
+- Server loopback VLESS and Hysteria2 both pass with egress 45.63.95.89.
+- Workstation direct VLESS and Hysteria2 both pass with egress 45.63.95.89.
+- New U001 exports downloaded to ~/.secrets/la02-U001; previous local export backed up with a timestamp.
+- Local Host la02 now connects directly to 45.63.95.89 as deploy; verified.
+- Unit tests: 23/23 pass.
+
+ACME_EMAIL=yzrhw0218@163.com
