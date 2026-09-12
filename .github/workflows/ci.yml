@@ -62,3 +62,13 @@ jobs:
         run: |
           npm ci
           npm run build
+
+  node-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run LA02 node adapter tests
+        run: python infra/la02/run_tests.py

@@ -23,3 +23,8 @@ Keep real keys, tokens, passwords, and .env files outside Git. Commit only examp
 For a given node, use one control plane as the source of truth. The marketplace 2S-UI adapter and the local LA02 sing-box user/config workflow must not provision the same node at the same time. The imported LA02 scripts are deployment and maintenance assets; activate them only for nodes explicitly assigned to that local control plane.
 
 The installer is infra/la02/sbin/install-node-adapter.sh; its systemd units are stored in infra/systemd/.
+
+## Tests
+
+Node adapter unit tests: `python infra/la02/run_tests.py`.
+Marketplace node commerce tests live under `backend/src/test/java/com/aidigital/marketplace/node` and run with `mvn test`.

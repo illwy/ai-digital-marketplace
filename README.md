@@ -20,6 +20,7 @@ frontend/     用户端与后续后台将基于此 Vue 工程扩展
 backend/      Spring Boot API
 docker/       Compose 与 Nginx
 docs/         规划与架构
+infra/        节点运维脚本与 systemd 单元
 ```
 
 开发前请阅读：
@@ -66,6 +67,12 @@ cd backend
 mvn test
 ```
 
+节点适配器测试：
+
+```bash
+python infra/la02/run_tests.py
+```
+
 本机若已占用 3306/8080/80，开发端口映射为：
 
 - 前端（经 Nginx）：http://localhost:8088
@@ -81,8 +88,7 @@ docker compose --env-file .env -f docker/docker-compose.yml up --build
 ```
 
 启动后会补种演示货架（账号月卡 / 激活码 / API 额度）和一条站点说明。购买路径用「立即交付（演示）」，不接入支付宝/微信商户。
-
-CI：GitHub Actions 在 push / PR 时跑后端 `mvn test` 和前端 `npm run build`。
+CI：GitHub Actions 在 push / PR 时跑后端 `mvn test`、前端 `npm run build` 和 `python infra/la02/run_tests.py`。
 
 ## 2S-UI 节点商品配置
 
