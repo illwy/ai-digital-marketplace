@@ -108,3 +108,7 @@ Content-Type: application/json
 后端环境变量只保存 2S-UI API Token，不写入数据库或 Git：`NODE_2SUI_ENABLED=true`、`NODE_2SUI_API_TOKEN=...`。适配器只使用 `/app/apiv2/clients` 和 `/app/apiv2/save`，不读取 2S-UI 数据库。支付回调先落库并创建唯一开通任务，任务失败会自动重试；用户可通过 `GET /api/v1/node-subscriptions` 查看订阅地址和协议链接。
 
 上线前请先用测试用户和测试节点验证创建、续费、到期禁用及重复回调；不要把生产服务器地址、节点密钥或其他基础设施信息提交到公开仓库。
+
+## 节点基础设施
+
+节点运维资产统一位于 `infra/`，其中 `infra/la02/` 提供节点配置渲染、应用、导出和健康检查脚本，`infra/systemd/` 提供服务单元。商城后端的节点商品、订单、支付和 2S-UI 订阅开通仍由 `backend/.../node` 负责。详见 `docs/nodes/tizi-integration.md`。
