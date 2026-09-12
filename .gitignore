@@ -56,3 +56,10 @@ infra/**/secrets/
 # Python generated files
 __pycache__/
 *.py[cod]
+infra/**/node-secrets.json
+infra/**/data/*.json
+infra/**/.secrets/
+infra/**/cloudflare.ini
+infra/**/id_*
+examples/nodes/node-secrets.json
+examples/nodes/users.json

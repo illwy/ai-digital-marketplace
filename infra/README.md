@@ -8,3 +8,5 @@ This directory contains the deploy-time assets imported from the former tizi wor
 The marketplace backend remains the system of record for products, orders, payments, and node subscriptions. These files are operational assets used to provision and maintain node servers; they are not a second marketplace backend.
 
 Do not place private keys, real tokens, passwords, or production .env files in this repository.
+
+The installer under la02/sbin/ resolves shared systemd units from infra/systemd/.

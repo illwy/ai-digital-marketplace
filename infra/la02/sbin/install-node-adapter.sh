@@ -37,7 +37,7 @@ install -m 750 "$ROOT/sbin/la02-health" /usr/local/sbin/la02-health
 install -m 750 "$ROOT/sbin/la02-init-secrets" /usr/local/sbin/la02-init-secrets
 
 install -d -m 755 /etc/systemd/system
-install -m 644 "$ROOT/systemd/la02-health.service" /etc/systemd/system/la02-health.service
-install -m 644 "$ROOT/systemd/la02-health.timer" /etc/systemd/system/la02-health.timer
+install -m 644 "$ROOT/../systemd/la02-health.service" /etc/systemd/system/la02-health.service
+install -m 644 "$ROOT/../systemd/la02-health.timer" /etc/systemd/system/la02-health.timer
 
 echo "install-node-adapter: files installed; sing-box not started"

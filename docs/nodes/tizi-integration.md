@@ -17,3 +17,9 @@ The imported infra/ assets provide node-side deployment, configuration rendering
 ## Sensitive data
 
 Keep real keys, tokens, passwords, and .env files outside Git. Commit only example files with placeholders.
+
+## Control-plane rule
+
+For a given node, use one control plane as the source of truth. The marketplace 2S-UI adapter and the local LA02 sing-box user/config workflow must not provision the same node at the same time. The imported LA02 scripts are deployment and maintenance assets; activate them only for nodes explicitly assigned to that local control plane.
+
+The installer is infra/la02/sbin/install-node-adapter.sh; its systemd units are stored in infra/systemd/.
