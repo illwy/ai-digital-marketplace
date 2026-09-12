@@ -8,6 +8,10 @@ services:
     ports: !reset []
     environment:
       JAVA_TOOL_OPTIONS: -Xms256m -Xmx768m
+      NODE_2SUI_ENABLED: ${NODE_2SUI_ENABLED:-false}
+      NODE_2SUI_API_BASE_URL: ${NODE_2SUI_API_BASE_URL:-}
+      NODE_2SUI_WEB_PATH: ${NODE_2SUI_WEB_PATH:-/app/}
+      NODE_2SUI_API_TOKEN: ${NODE_2SUI_API_TOKEN:-}
   nginx:
     ports: !override
       - "80:80"

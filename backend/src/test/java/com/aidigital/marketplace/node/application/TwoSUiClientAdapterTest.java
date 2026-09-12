@@ -16,9 +16,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.client.RestClient;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-
 import com.aidigital.marketplace.node.config.NodeProperties;
 import com.aidigital.marketplace.node.infrastructure.entity.NodeProductPlanEntity;
 import com.aidigital.marketplace.node.infrastructure.entity.NodeSubscriptionEntity;
@@ -45,7 +42,7 @@ class TwoSUiClientAdapterTest {
         TwoSUiClientAdapter adapter = adapter(properties(false, "token"));
         assertThatThrownBy(() -> adapter.provision(plan("http://127.0.0.1"), null, "n", 1, 1, 1))
                 .isInstanceOf(TwoSUiClientAdapter.NodeProviderException.class)
-                .hasMessageContaining("未配置");
+                .hasMessageContaining("is not configured");
     }
 
     @Test
@@ -55,7 +52,7 @@ class TwoSUiClientAdapterTest {
         plan.setInboundIdsJson("oops");
         assertThatThrownBy(() -> adapter.provision(plan, null, "n", 1, 1, 1))
                 .isInstanceOf(TwoSUiClientAdapter.NodeProviderException.class)
-                .hasMessageContaining("入站");
+                .hasMessageContaining("invalid inbound ids");
     }
 
     @Test
@@ -130,16 +127,11 @@ class TwoSUiClientAdapterTest {
 
         assertThatThrownBy(() -> adapter.provision(plan(panel.baseUrl()), null, "n", 1, 1, 1))
                 .isInstanceOf(TwoSUiClientAdapter.NodeProviderException.class)
-                .hasMessageContaining("保存客户端失败");
+                .hasMessageContaining("save client failed");
     }
 
     private TwoSUiClientAdapter adapter(NodeProperties properties) {
-        return new TwoSUiClientAdapter(
-                RestClient.builder().messageConverters(converters -> {
-                    converters.add(0, new MappingJackson2HttpMessageConverter(objectMapper));
-                }),
-                objectMapper,
-                properties);
+        return new TwoSUiClientAdapter(objectMapper, properties);
     }
 
     private static NodeProperties properties(boolean enabled, String token) {

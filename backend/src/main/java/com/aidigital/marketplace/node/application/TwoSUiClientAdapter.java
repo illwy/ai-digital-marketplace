@@ -1,16 +1,19 @@
 package com.aidigital.marketplace.node.application;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
 
 import com.aidigital.marketplace.node.config.NodeProperties;
 import com.aidigital.marketplace.node.infrastructure.entity.NodeProductPlanEntity;
@@ -27,15 +30,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class TwoSUiClientAdapter {
 
-    private final RestClient.Builder restClientBuilder;
     private final ObjectMapper objectMapper;
     private final NodeProperties properties;
+    private final HttpClient httpClient;
 
-    public TwoSUiClientAdapter(
-            RestClient.Builder restClientBuilder, ObjectMapper objectMapper, NodeProperties properties) {
-        this.restClientBuilder = restClientBuilder;
+    public TwoSUiClientAdapter(ObjectMapper objectMapper, NodeProperties properties) {
         this.objectMapper = objectMapper;
         this.properties = properties;
+        this.httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).build();
     }
 
     public RemoteClient provision(
@@ -46,29 +48,44 @@ public class TwoSUiClientAdapter {
             long expiryEpochSeconds,
             int deviceLimit) {
         if (!properties.isEnabled() || properties.getApiToken().isBlank()) {
-            throw new NodeProviderException("2S-UI 适配器未配置");
+            throw new NodeProviderException("2S-UI adapter is not configured");
         }
-        String baseUrl = plan.getApiBaseUrl();
-        RestClient client = restClientBuilder.baseUrl(baseUrl).build();
         JsonNode remote = existing == null || existing.getProviderClientId() == null
                 ? null
-                : getClient(client, plan, existing.getProviderClientId());
+                : getClient(plan, existing.getProviderClientId());
 
         Map<String, Object> payload = remote == null
                 ? newClientPayload(plan, clientName, trafficBytes, expiryEpochSeconds, deviceLimit)
                 : mergeExistingPayload(remote, clientName, trafficBytes, expiryEpochSeconds, deviceLimit);
         String action = remote == null ? "new" : "edit";
         if (remote != null && remote.path("id").asLong(0) == 0) {
-            throw new NodeProviderException("2S-UI 客户端不存在，无法续费");
+            throw new NodeProviderException("2S-UI client is missing");
         }
         if (remote != null) {
             payload.put("id", remote.path("id").asLong());
         }
-        saveClient(client, plan, action, payload);
+        saveClient(plan, action, payload);
 
-        JsonNode saved = findByName(client, plan, clientName);
+        JsonNode saved = findByName(plan, clientName);
         if (saved == null || saved.path("id").asLong(0) == 0) {
-            throw new NodeProviderException("2S-UI 未返回已保存的客户端");
+            throw new NodeProviderException("2S-UI did not return the saved client");
+        }
+        JsonNode detailed = null;
+        for (int i = 0; i < 8; i++) {
+            detailed = getClient(plan, saved.path("id").asLong());
+            if (detailed != null && detailed.path("links").isArray() && detailed.path("links").size() > 0) {
+                saved = detailed;
+                break;
+            }
+            if (detailed != null) {
+                saved = detailed;
+            }
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
         String links = saved.path("links").isMissingNode() ? "[]" : saved.path("links").toString();
         return new RemoteClient(saved.path("id").asLong(), saved.path("name").asText(clientName), links,
@@ -79,57 +96,91 @@ public class TwoSUiClientAdapter {
         if (subscription.getProviderClientId() == null) {
             return;
         }
-        RestClient client = restClientBuilder.baseUrl(plan.getApiBaseUrl()).build();
-        JsonNode remote = getClient(client, plan, subscription.getProviderClientId());
+        JsonNode remote = getClient(plan, subscription.getProviderClientId());
         if (remote == null) {
             return;
         }
         Map<String, Object> payload = objectMapper.convertValue(remote, new TypeReference<Map<String, Object>>() {});
         payload.put("enable", false);
-        saveClient(client, plan, "edit", payload);
+        saveClient(plan, "edit", payload);
     }
 
-    private JsonNode getClient(RestClient client, NodeProductPlanEntity plan, Long id) {
-        JsonNode root = client.get()
-                .uri(uri -> uri.path(joinPath(plan.getWebPath(), "apiv2/clients"))
-                        .queryParam("id", id).build())
-                .header("Token", properties.getApiToken())
-                .retrieve().body(JsonNode.class);
+    private JsonNode getClient(NodeProductPlanEntity plan, Long id) {
+        JsonNode root = get(plan, "apiv2/clients?id=" + id);
         return unwrapObject(root).stream().findFirst().orElse(null);
     }
 
-    private JsonNode findByName(RestClient client, NodeProductPlanEntity plan, String name) {
-        JsonNode root = client.get()
-                .uri(joinPath(plan.getWebPath(), "apiv2/clients"))
-                .header("Token", properties.getApiToken())
-                .retrieve().body(JsonNode.class);
+    private JsonNode findByName(NodeProductPlanEntity plan, String name) {
+        JsonNode root = get(plan, "apiv2/clients");
         return unwrapObject(root).stream()
                 .filter(n -> name.equals(n.path("name").asText()))
                 .findFirst().orElse(null);
     }
 
-    private void saveClient(
-            RestClient client, NodeProductPlanEntity plan, String action, Map<String, Object> payload) {
+    private void saveClient(NodeProductPlanEntity plan, String action, Map<String, Object> payload) {
         try {
-            MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-            form.add("object", "clients");
-            form.add("action", action);
-            form.add("sync", "true");
-            form.add("data", objectMapper.writeValueAsString(payload));
-            JsonNode response = client.post()
-                    .uri(joinPath(plan.getWebPath(), "apiv2/save"))
-                    .header("Token", properties.getApiToken())
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .body(form)
-                    .retrieve().body(JsonNode.class);
-            if (response == null || !response.path("success").asBoolean(false)) {
-                throw new NodeProviderException("2S-UI 保存客户端失败");
+            String encoded = URLEncoder.encode(objectMapper.writeValueAsString(payload), StandardCharsets.UTF_8);
+            String form = "object=clients"
+                    + "&action=" + URLEncoder.encode(action, StandardCharsets.UTF_8)
+                    + "&sync=true"
+                    + "&data=" + encoded;
+            JsonNode response = postForm(plan, "apiv2/save", form);
+            if (response == null || !isSuccess(response)) {
+                throw new NodeProviderException("2S-UI save client failed");
             }
         } catch (NodeProviderException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NodeProviderException("2S-UI API 请求失败", ex);
+            throw new NodeProviderException("2S-UI API request failed", ex);
         }
+    }
+
+    private boolean isSuccess(JsonNode response) {
+        JsonNode success = response.path("success");
+        if (success.isBoolean()) {
+            return success.asBoolean();
+        }
+        if (success.isTextual()) {
+            return "true".equalsIgnoreCase(success.asText());
+        }
+        return false;
+    }
+
+    private JsonNode get(NodeProductPlanEntity plan, String suffix) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(absoluteUrl(plan, suffix)))
+                    .timeout(Duration.ofSeconds(30))
+                    .header("Token", properties.getApiToken())
+                    .GET()
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return objectMapper.readTree(response.body() == null ? "{}" : response.body());
+        } catch (Exception ex) {
+            throw new NodeProviderException("2S-UI API request failed", ex);
+        }
+    }
+
+    private JsonNode postForm(NodeProductPlanEntity plan, String suffix, String form) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(absoluteUrl(plan, suffix)))
+                    .timeout(Duration.ofSeconds(30))
+                    .header("Token", properties.getApiToken())
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(form))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return objectMapper.readTree(response.body() == null ? "{}" : response.body());
+        } catch (Exception ex) {
+            throw new NodeProviderException("2S-UI API request failed", ex);
+        }
+    }
+
+    private String absoluteUrl(NodeProductPlanEntity plan, String suffix) {
+        String base = plan.getApiBaseUrl();
+        if (base.endsWith("/")) {
+            base = base.substring(0, base.length() - 1);
+        }
+        return base + joinPath(plan.getWebPath(), suffix);
     }
 
     private Map<String, Object> newClientPayload(
@@ -175,19 +226,22 @@ public class TwoSUiClientAdapter {
             }
             return ids;
         } catch (Exception ex) {
-            throw new NodeProviderException("节点入站 ID 配置无效", ex);
+            throw new NodeProviderException("invalid inbound ids", ex);
         }
     }
 
     private List<JsonNode> unwrapObject(JsonNode root) {
         if (root == null) return List.of();
         JsonNode obj = root.has("obj") ? root.get("obj") : root;
-        if (obj.isArray()) {
+        if (obj != null && obj.has("clients")) {
+            obj = obj.get("clients");
+        }
+        if (obj != null && obj.isArray()) {
             List<JsonNode> result = new ArrayList<>();
             obj.forEach(result::add);
             return result;
         }
-        return obj.isObject() ? List.of(obj) : List.of();
+        return obj != null && obj.isObject() ? List.of(obj) : List.of();
     }
 
     private String firstUri(JsonNode links) {
@@ -196,6 +250,14 @@ public class TwoSUiClientAdapter {
                 if (link.hasNonNull("uri") && !link.path("uri").asText().isBlank()) {
                     return link.path("uri").asText();
                 }
+            }
+        }
+        if (links != null && links.isTextual()) {
+            try {
+                JsonNode parsed = objectMapper.readTree(links.asText());
+                return firstUri(parsed);
+            } catch (Exception ignored) {
+                return "";
             }
         }
         return "";
