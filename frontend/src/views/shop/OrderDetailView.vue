@@ -192,6 +192,11 @@ watch(order, tick, { immediate: true })
       <el-button size="large" @click="topup">钱包充值 ¥10</el-button>
       <el-button size="large" text @click="onCancel">取消订单</el-button>
     </div>
+    <RouterLink
+      v-else-if="order.payStatus === 'PAID' && order.deliveryStatus === 'PROVISIONING'"
+      class="issued-link"
+      to="/node-subscriptions"
+    >查看开通进度 →</RouterLink>
     </el-card>
   </motion.div>
 

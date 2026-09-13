@@ -70,9 +70,9 @@ watch(
       </nav>
     </header>
     <main class="shop-main">
-      <RouterView v-slot="{ Component }">
+      <RouterView v-slot="{ Component, route: viewRoute }">
         <Transition name="page" mode="out-in">
-          <component :is="Component" />
+          <component :is="Component" v-if="Component" :key="viewRoute.path" />
         </Transition>
       </RouterView>
     </main>

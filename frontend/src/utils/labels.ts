@@ -67,6 +67,14 @@ const INVENTORY_STATUS_TAGS: Record<string, StatusTagType> = {
   INVALID: 'danger',
 }
 
+const NODE_SUBSCRIPTION_STATUS_LABELS: Record<string, string> = {
+  ACTIVE: '正常',
+  PROVISIONING: '开通中',
+  PENDING: '开通中',
+  EXPIRED: '已过期',
+  FAILED: '开通失败',
+}
+
 function lookup(map: Record<string, string>, status: string): string {
   return map[status] ?? status
 }
@@ -113,6 +121,10 @@ export function inventoryStatusLabel(status: string): string {
 
 export function inventoryStatusTagType(status: string): StatusTagType {
   return lookupTag(INVENTORY_STATUS_TAGS, status)
+}
+
+export function nodeSubscriptionStatusLabel(status: string): string {
+  return lookup(NODE_SUBSCRIPTION_STATUS_LABELS, status)
 }
 
 const PRODUCT_STATUS_LABELS: Record<string, string> = {

@@ -73,7 +73,9 @@ async function onLogout(): Promise<void> {
         </div>
       </header>
       <main class="admin-main">
-        <RouterView />
+        <RouterView v-slot="{ Component }">
+          <component :is="Component" v-if="Component" />
+        </RouterView>
       </main>
     </div>
   </div>
