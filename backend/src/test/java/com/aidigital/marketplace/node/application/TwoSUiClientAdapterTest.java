@@ -98,6 +98,19 @@ class TwoSUiClientAdapterTest {
     }
 
     @Test
+    void provisionDoesNotCreateReplacementWhenExistingClientIsMissing() throws Exception {
+        FakePanel panel = startPanel();
+        NodeSubscriptionEntity subscription = new NodeSubscriptionEntity();
+        subscription.setProviderClientId(7L);
+
+        assertThatThrownBy(() -> adapter(properties(true, "test-token"))
+                .provision(plan(panel.baseUrl()), subscription, "market-u1-p2", 4096, 1800000000L, 2))
+                .isInstanceOf(TwoSUiClientAdapter.NodeProviderException.class)
+                .hasMessageContaining("client is missing");
+        assertThat(panel.savedActions).isEmpty();
+    }
+
+    @Test
     void disableTurnsOffRemoteClient() throws Exception {
         FakePanel panel = startPanel();
         ObjectNode existing = objectMapper.createObjectNode();
@@ -130,6 +143,17 @@ class TwoSUiClientAdapterTest {
                 .hasMessageContaining("save client failed");
     }
 
+    @Test
+    void httpFailureStatusIsSurfaced() throws Exception {
+        FakePanel panel = startPanel();
+        panel.httpStatus = 503;
+
+        assertThatThrownBy(() -> adapter(properties(true, "test-token"))
+                .provision(plan(panel.baseUrl()), null, "n", 1, 1, 1))
+                .isInstanceOf(TwoSUiClientAdapter.NodeProviderException.class)
+                .hasMessageContaining("status 503");
+    }
+
     private TwoSUiClientAdapter adapter(NodeProperties properties) {
         return new TwoSUiClientAdapter(objectMapper, properties);
     }
@@ -153,6 +177,11 @@ class TwoSUiClientAdapterTest {
         FakePanel panel = new FakePanel();
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         server.createContext("/app/apiv2/clients", exchange -> {
+            if (panel.httpStatus != 200) {
+                exchange.sendResponseHeaders(panel.httpStatus, -1);
+                exchange.close();
+                return;
+            }
             if (!"test-token".equals(exchange.getRequestHeaders().getFirst("Token"))) {
                 exchange.sendResponseHeaders(401, -1);
                 exchange.close();
@@ -238,6 +267,7 @@ class TwoSUiClientAdapterTest {
         private final AtomicLong nextId = new AtomicLong(1);
         private int port;
         private boolean saveSuccess = true;
+        private int httpStatus = 200;
 
         private String baseUrl() {
             return "http://127.0.0.1:" + port;

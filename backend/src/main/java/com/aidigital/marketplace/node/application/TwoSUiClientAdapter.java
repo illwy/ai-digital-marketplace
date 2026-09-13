@@ -53,6 +53,9 @@ public class TwoSUiClientAdapter {
         JsonNode remote = existing == null || existing.getProviderClientId() == null
                 ? null
                 : getClient(plan, existing.getProviderClientId());
+        if (existing != null && existing.getProviderClientId() != null && remote == null) {
+            throw new NodeProviderException("2S-UI client is missing");
+        }
 
         Map<String, Object> payload = remote == null
                 ? newClientPayload(plan, clientName, trafficBytes, expiryEpochSeconds, deviceLimit)
@@ -154,7 +157,10 @@ public class TwoSUiClientAdapter {
                     .GET()
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            ensureSuccessful(response);
             return objectMapper.readTree(response.body() == null ? "{}" : response.body());
+        } catch (NodeProviderException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new NodeProviderException("2S-UI API request failed", ex);
         }
@@ -169,9 +175,18 @@ public class TwoSUiClientAdapter {
                     .POST(HttpRequest.BodyPublishers.ofString(form))
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            ensureSuccessful(response);
             return objectMapper.readTree(response.body() == null ? "{}" : response.body());
+        } catch (NodeProviderException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new NodeProviderException("2S-UI API request failed", ex);
+        }
+    }
+
+    private void ensureSuccessful(HttpResponse<String> response) {
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new NodeProviderException("2S-UI HTTP request failed with status " + response.statusCode());
         }
     }
 
