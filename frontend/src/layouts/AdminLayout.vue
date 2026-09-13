@@ -17,6 +17,7 @@ const menus = [
   { path: '/admin/deliveries', label: '交付' },
   { path: '/admin/announcements', label: '公告' },
   { path: '/admin/after-sales', label: '售后' },
+  { path: '/admin/node-subscriptions', label: '节点订阅' },
 ]
 
 const active = computed(() => route.path)
@@ -73,8 +74,8 @@ async function onLogout(): Promise<void> {
         </div>
       </header>
       <main class="admin-main">
-        <RouterView v-slot="{ Component }">
-          <component :is="Component" v-if="Component" />
+        <RouterView v-slot="{ Component, route: viewRoute }">
+          <component :is="Component" v-if="Component" :key="viewRoute.fullPath" />
         </RouterView>
       </main>
     </div>

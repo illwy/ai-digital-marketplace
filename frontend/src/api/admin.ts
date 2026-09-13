@@ -13,7 +13,12 @@ import type {
   OrderView,
   ProductView,
   WalletView,
+  AdminNodeSubscriptionView,
 } from '../types/api'
+
+export function fetchAdminNodeSubscriptions(params: { username?: string; status?: string } = {}) {
+  return http.get<DataResponse<AdminNodeSubscriptionView[]>>('/admin/node/subscriptions', { params })
+}
 
 export function fetchAdminOverview() {
   return http.get<DataResponse<AdminOverviewView>>('/admin/overview')

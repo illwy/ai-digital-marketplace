@@ -22,6 +22,7 @@ import OrdersView from '../views/admin/OrdersView.vue'
 import DeliveriesView from '../views/admin/DeliveriesView.vue'
 import AnnouncementsView from '../views/admin/AnnouncementsView.vue'
 import AfterSalesView from '../views/admin/AfterSalesView.vue'
+import NodeSubscriptionsAdminView from '../views/admin/NodeSubscriptionsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -57,6 +58,7 @@ const router = createRouter({
         { path: 'deliveries', name: 'admin-deliveries', component: DeliveriesView },
         { path: 'announcements', name: 'admin-announcements', component: AnnouncementsView },
         { path: 'after-sales', name: 'admin-after-sales', component: AfterSalesView },
+        { path: 'node-subscriptions', name: 'admin-node-subscriptions', component: NodeSubscriptionsAdminView },
       ],
     },
   ],

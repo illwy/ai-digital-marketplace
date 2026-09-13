@@ -48,7 +48,7 @@ function stopPolling(): void {
 
 function startPolling(): void {
   stopPolling()
-  if (processingCount.value <= 0) return
+  if (!alive || document.hidden || processingCount.value <= 0) return
   refreshTimer = window.setInterval(() => {
     if (shouldPoll()) void load({ silent: true })
   }, 15000)
@@ -76,12 +76,17 @@ async function load(options: { silent?: boolean } = {}): Promise<void> {
       pendingOrders.value = orderList.filter(
         (order) => order.payStatus === 'PAID' && order.deliveryStatus === 'PROVISIONING',
       )
+    } else {
+      pendingOrders.value = []
+      if (!errorMessage.value) errorMessage.value = '订阅进度暂时无法完整加载，请稍后重试'
     }
 
     if (subsResult.status === 'fulfilled') {
       const subs = subsResult.value.data.data
       items.value = Array.isArray(subs) ? subs : []
-      errorMessage.value = ''
+      if (ordersResult.status === 'fulfilled') {
+        errorMessage.value = ''
+      }
     } else {
       errorMessage.value = readApiError(subsResult.reason).message
     }
@@ -108,7 +113,10 @@ async function copy(value: string, label: string): Promise<void> {
 }
 
 function onVisibility(): void {
-  if (document.hidden) return
+  if (document.hidden) {
+    stopPolling()
+    return
+  }
   if (processingCount.value > 0) void load({ silent: true })
 }
 
@@ -142,7 +150,7 @@ onUnmounted(() => {
     <div v-if="hasContent" class="subscription-summary">
       <div class="summary-item"><strong>{{ activeCount }}</strong><span>正常订阅</span></div>
       <div class="summary-item"><strong>{{ processingCount }}</strong><span>开通中</span></div>
-      <div class="summary-item"><strong>{{ items.length + pendingOrders.length }}</strong><span>全部订阅</span></div>
+      <div class="summary-item"><strong>{{ items.length + pendingOrders.length }}</strong><span>订阅与开通中</span></div>
     </div>
     <el-skeleton v-if="loading && !hasContent" :rows="8" animated />
     <el-empty v-else-if="!hasContent && !errorMessage" description="还没有节点订阅，购买节点商品后会显示在这里">
@@ -202,21 +210,21 @@ onUnmounted(() => {
 .page-desc { margin: 8px 0 0; color: var(--mute); font-size: 14px; max-width: 46rem; }
 .node-grid { display: grid; gap: 16px; }
 .subscription-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0 16px; }
-.summary-item { padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.summary-item { padding: 16px 18px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface-strong); box-shadow: 0 8px 24px rgba(26, 36, 48, .06); }
 .summary-item strong { display: block; color: var(--ink); font: 700 24px var(--font-mono); }
 .summary-item span { color: var(--mute); font-size: 12px; }
 .subscription-error { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0; padding: 12px 14px; border: 1px solid rgba(225, 29, 72, .24); border-radius: 10px; color: var(--red); background: rgba(225, 29, 72, .06); }
-.node-card { border-color: var(--line); background: rgba(12, 15, 28, .72); }
+.node-card { border-color: var(--line-strong); background: var(--surface-strong); box-shadow: 0 12px 30px rgba(26, 36, 48, .08); }
 .node-card.is-pending { border-color: rgba(232, 163, 23, .35); }
 .node-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-.node-card h2 { margin: 8px 0 0; font-size: 18px; }
+.node-card h2 { margin: 8px 0 0; color: var(--ink); font-size: 18px; }
 .node-status { color: var(--azure-soft); font-size: 12px; letter-spacing: .08em; }
 .status-active { color: var(--green); }
 .status-provisioning, .status-pending { color: var(--amber); }
 .status-expired, .status-failed { color: var(--red); }
 .node-expiry, .node-meta { color: var(--mute); font-size: 13px; }
 .node-url { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
-.node-url code { overflow: hidden; flex: 1; min-width: 0; padding: 10px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); white-space: nowrap; text-overflow: ellipsis; }
+.node-url code { overflow: hidden; flex: 1; min-width: 0; padding: 10px; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--ink-soft); background: #f7faf9; white-space: nowrap; text-overflow: ellipsis; }
 .order-link { display: inline-block; margin-top: 12px; color: var(--azure-soft); text-decoration: none; font-size: 13px; }
 .order-link:hover { text-decoration: underline; }
 details { margin-top: 14px; color: var(--mute); font-size: 13px; }

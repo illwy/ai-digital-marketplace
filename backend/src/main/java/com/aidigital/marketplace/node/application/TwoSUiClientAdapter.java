@@ -91,8 +91,9 @@ public class TwoSUiClientAdapter {
             }
         }
         String links = saved.path("links").isMissingNode() ? "[]" : saved.path("links").toString();
-        return new RemoteClient(saved.path("id").asLong(), saved.path("name").asText(clientName), links,
-                firstUri(saved.path("links")));
+        long clientId = saved.path("id").asLong();
+        return new RemoteClient(clientId, saved.path("name").asText(clientName), links,
+                subscriptionUrl(saved.path("name").asText(clientName), firstUri(saved.path("links"))));
     }
 
     public void disable(NodeProductPlanEntity plan, NodeSubscriptionEntity subscription) {
@@ -276,6 +277,16 @@ public class TwoSUiClientAdapter {
             }
         }
         return "";
+    }
+
+    private String subscriptionUrl(String clientName, String fallback) {
+        String template = properties.getSubscriptionUrlTemplate();
+        if (template == null || template.isBlank()) return fallback;
+        String url = template.replace("{clientName}", URLEncoder.encode(clientName, StandardCharsets.UTF_8));
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            throw new NodeProviderException("subscription URL template must use http or https");
+        }
+        return url;
     }
 
     private String joinPath(String webPath, String suffix) {

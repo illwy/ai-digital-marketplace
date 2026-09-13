@@ -123,6 +123,17 @@ export interface NodeSubscriptionView {
   status: string
 }
 
+export interface AdminNodeSubscriptionView {
+  id: number
+  userId: number
+  productId: number
+  username: string
+  clientName: string
+  expiresAt: string
+  subscriptionUrl: string
+  status: string
+}
+
 export interface WalletView {
   userId: number
   balanceFen: number

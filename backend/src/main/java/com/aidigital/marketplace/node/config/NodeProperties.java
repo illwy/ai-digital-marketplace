@@ -9,6 +9,7 @@ public class NodeProperties {
     private String apiBaseUrl = "";
     private String webPath = "/app/";
     private String apiToken = "";
+    private String subscriptionUrlTemplate = "";
 
     public boolean isEnabled() {
         return enabled;
@@ -40,5 +41,11 @@ public class NodeProperties {
 
     public void setApiToken(String apiToken) {
         this.apiToken = apiToken;
+    }
+
+    public String getSubscriptionUrlTemplate() { return subscriptionUrlTemplate; }
+
+    public void setSubscriptionUrlTemplate(String subscriptionUrlTemplate) {
+        this.subscriptionUrlTemplate = subscriptionUrlTemplate;
     }
 }

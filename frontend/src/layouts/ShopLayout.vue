@@ -71,9 +71,7 @@ watch(
     </header>
     <main class="shop-main">
       <RouterView v-slot="{ Component, route: viewRoute }">
-        <Transition name="page" mode="out-in">
-          <component :is="Component" v-if="Component" :key="viewRoute.path" />
-        </Transition>
+        <component :is="Component" v-if="Component" :key="viewRoute.fullPath" />
       </RouterView>
     </main>
     <footer class="shop-footer">

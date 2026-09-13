@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aidigital.marketplace.node.api.dto.NodeSubscriptionView;
+import com.aidigital.marketplace.node.api.dto.NodeSubscriptionAdminView;
 import com.aidigital.marketplace.node.api.dto.NodeProvisionJobView;
 import com.aidigital.marketplace.node.infrastructure.entity.NodeProductPlanEntity;
 import com.aidigital.marketplace.node.infrastructure.entity.NodeProvisionJobEntity;
@@ -91,6 +92,18 @@ public class NodeProvisioningService {
                         .eq(NodeSubscriptionEntity::getUserId, userId)
                         .orderByDesc(NodeSubscriptionEntity::getId))
                 .stream().map(NodeSubscriptionView::from).toList();
+    }
+
+    public List<NodeSubscriptionAdminView> listAll(String username, String status) {
+        String normalizedUsername = username == null ? "" : username.trim();
+        return subscriptionMapper.selectList(new LambdaQueryWrapper<NodeSubscriptionEntity>()
+                        .eq(status != null && !status.isBlank(), NodeSubscriptionEntity::getStatus, status)
+                        .orderByDesc(NodeSubscriptionEntity::getId))
+                .stream()
+                .map(NodeSubscriptionAdminView::from)
+                .filter(view -> normalizedUsername.isEmpty()
+                        || (view.userId() != null && Long.toString(view.userId()).equals(normalizedUsername)))
+                .toList();
     }
 
     public NodeSubscriptionView getMine(Long userId, Long id) {
@@ -190,12 +203,8 @@ public class NodeProvisioningService {
                 ? "market-u" + job.getUserId() + "-p" + job.getProductId()
                 : existing.getClientName();
         TwoSUiClientAdapter.RemoteClient remote = adapter.provision(
-                plan,
-                existing,
-                clientName,
-                plan.getTrafficBytes(),
-                expiresAt.atZone(java.time.ZoneId.systemDefault()).toEpochSecond(),
-                plan.getDeviceLimit());
+                plan, existing, clientName, plan.getTrafficBytes(),
+                expiresAt.atZone(java.time.ZoneId.systemDefault()).toEpochSecond(), plan.getDeviceLimit());
 
         NodeSubscriptionEntity target = existing == null ? new NodeSubscriptionEntity() : existing;
         target.setUserId(job.getUserId());

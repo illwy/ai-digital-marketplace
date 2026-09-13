@@ -5,17 +5,20 @@ import type { WalletView } from '../types/api'
 
 export const useWalletStore = defineStore('wallet', () => {
   const wallet = ref<WalletView | null>(null)
+  let refreshSequence = 0
 
   async function refresh(): Promise<void> {
+    const sequence = ++refreshSequence
     try {
       const { data } = await fetchWallet()
-      wallet.value = data.data
+      if (sequence === refreshSequence) wallet.value = data.data
     } catch {
-      wallet.value = null
+      if (sequence === refreshSequence) wallet.value = null
     }
   }
 
   function clear(): void {
+    refreshSequence += 1
     wallet.value = null
   }
 

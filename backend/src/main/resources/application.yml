@@ -76,3 +76,4 @@ app:
     api-base-url: ${NODE_2SUI_API_BASE_URL:}
     web-path: ${NODE_2SUI_WEB_PATH:/app/}
     api-token: ${NODE_2SUI_API_TOKEN:}
+    subscription-url-template: ${NODE_SUBSCRIPTION_URL_TEMPLATE:https://sub.k8izuh.com/sub/{clientName}}
